@@ -27,13 +27,13 @@ export default function SWOTForm() {
 
   const pickResponse = (primary, secondary, responses) => {
     let score = (primary * 0.7) + (secondary * 0.3);
-    let baseIndex = Math.round((score / 5) * 30);
+    let baseIndex = Math.round((score / 5) * 40);
 
     let noise = Math.floor(Math.random() * 7) - 3; // -3 to +3
     let finalIndex = baseIndex + noise;
 
     if (finalIndex < 1) finalIndex = 1;
-    if (finalIndex > 30) finalIndex = 30;
+    if (finalIndex > 40) finalIndex = 40;
 
     return responses[finalIndex - 1];
   };
