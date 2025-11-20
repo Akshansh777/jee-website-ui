@@ -1,3 +1,4 @@
+import { computeScores } from "../utils/score";
 import React, { useState } from "react";
 import './swot.css';
 import {
