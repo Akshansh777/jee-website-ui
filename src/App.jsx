@@ -1,137 +1,144 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import './swot.css';
+import {
+  StrengthResponses,
+  WeaknessResponses,
+  OpportunityResponses,
+  ThreatResponses
+} from "./ResponseBank";
 
-function App() {
-  // State to store answers
-  const [mcqAnswers, setMcqAnswers] = useState({});
-  const [descAnswers, setDescAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+export default function SWOTForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    q1: "", q2: "",
+    q3: "", q4: "",
+    q5: "", q6: "",
+    q7: "", q8: "",
+    q9: "", q10: "",
+  });
 
-  const mcqs = [
-    "MCQ 1: What is your study schedule like?",
-    "MCQ 2: How consistently do you study?",
-    "MCQ 3: Do you solve PYQs daily?",
-    "MCQ 4: How strong are your fundamentals?",
-    "MCQ 5: Do you revise weekly?",
-    "MCQ 6: How well do you manage time?",
-    "MCQ 7: Are you confident in PCM equally?",
-    "MCQ 8: How many hours do you study?",
-    "MCQ 9: How do you analyze mistakes?",
-    "MCQ 10: Do you follow a test series?",
-  ];
+  const [swot, setSwot] = useState(null);
 
-  const descriptive = [
-    "Describe your weak areas.",
-    "Describe your strong areas.",
-    "What distracts you the most?",
-    "How do you revise?",
-    "What is your study strategy for the next 30 days?"
-  ];
-
-  // Handle MCQ changes
-  const handleMcqChange = (index, value) => {
-    setMcqAnswers((prev) => ({ ...prev, [`Question ${index + 1}`]: value }));
+  const optionScore = (val) => {
+    // A = 5, B = 4, C = 3, D = 2, E = 1
+    const map = { A: 5, B: 4, C: 3, D: 2, E: 1 };
+    return map[val] || 1;
   };
 
-  // Handle Descriptive changes
-  const handleDescChange = (index, value) => {
-    setDescAnswers((prev) => ({ ...prev, [`Question ${index + 1}`]: value }));
+  const pickResponse = (primary, secondary, responses) => {
+    let score = (primary * 0.7) + (secondary * 0.3);
+    let baseIndex = Math.round((score / 5) * 30);
+
+    let noise = Math.floor(Math.random() * 7) - 3; // -3 to +3
+    let finalIndex = baseIndex + noise;
+
+    if (finalIndex < 1) finalIndex = 1;
+    if (finalIndex > 30) finalIndex = 30;
+
+    return responses[finalIndex - 1];
   };
 
-  // Handle Submit
-  const handleSubmit = () => {
-    const finalData = { ...mcqAnswers, ...descAnswers };
-    console.log("Submitted Data:", finalData);
-    setSubmitted(true);
-    // Just added, will discuss about it later
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const S_primary = optionScore(formData.q1);
+    const S_secondary = optionScore(formData.q2);
+
+    const W_primary = optionScore(formData.q3);
+    const W_secondary = optionScore(formData.q4);
+
+    const O_primary = optionScore(formData.q5);
+    const O_secondary = optionScore(formData.q6);
+
+    const T_primary = optionScore(formData.q7);
+    const T_secondary = optionScore(formData.q8);
+
+    const S = pickResponse(S_primary, S_secondary, StrengthResponses);
+    const W = pickResponse(W_primary, W_secondary, WeaknessResponses);
+    const O = pickResponse(O_primary, O_secondary, OpportunityResponses);
+    const T = pickResponse(T_primary, T_secondary, ThreatResponses);
+
+    setSwot({ S, W, O, T });
   };
+
+  // --- Modified Options Dropdown ---
+  const mcqOptions = (
+    <>
+      <option value="">Select an option</option>
+      <option value="A">Always / Very Confident / Very Often</option>
+      <option value="B">Often / Confident</option>
+      <option value="C">Sometimes / Neutral</option>
+      <option value="D">Rarely / Slightly</option>
+      <option value="E">Never / Very Low</option>
+    </>
+  );
+
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8 font-sans text-slate-800">
-      <div className="max-w-3xl mx-auto">
+  <div className="swot-wrapper">
 
-        {/* Header */}
-        <header className="mb-8 border-b-2 border-slate-800 pb-4">
-          <h1 className="text-3xl font-bold text-slate-900">JEE Mentorship Assessment</h1>
-          <p className="text-slate-600 mt-2">Please answer honestly to help us tailor your mentorship plan.</p>
-        </header>
+    <div className="swot-card">
+      <h2 className="title">Student SWOT Analysis</h2>
 
-        {submitted ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center animate-fade-in">
-            <div className="mx-auto bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-            </div>
-            <h2 className="text-2xl font-bold text-green-800 mb-2">Assessment Submitted!</h2>
-            <p className="text-green-700">Your responses have been recorded. Your mentor will review them shortly.</p>
-            <button 
-              onClick={() => setSubmitted(false)}
-              className="mt-6 text-green-700 hover:text-green-900 underline"
+      <form onSubmit={handleSubmit} className="swot-form">
+
+        {/* Name */}
+        <div className="form-group">
+          <label className="label">Student Name:</label>
+          <input
+            type="text"
+            required
+            className="input"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+        </div>
+
+        {/* MCQ Questions */}
+        {[
+          "How confidently do you handle new challenges?",
+          "How consistent are you with completing tasks?",
+          "How often do you struggle to stay focused?",
+          "How comfortable are you managing deadlines?",
+          "Are you open to learning new skills?",
+          "How actively do you participate in growth activities?",
+          "How often do distractions affect your studies?",
+          "How often do you feel stressed due to competition?",
+          "Do you prefer group study or individual study?",
+          "How much time do you spend learning something new daily?"
+        ].map((q, i) => (
+          <div key={i} className="form-group">
+            <label className="label">{`Q${i + 1}. ${q}`}</label>
+            <select
+              required
+              className="select"
+              value={formData[`q${i + 1}`]}
+              onChange={(e) =>
+                setFormData({ ...formData, [`q${i + 1}`]: e.target.value })
+              }
             >
-              Edit Responses
-            </button>
+              {mcqOptions}
+            </select>
           </div>
-        ) : (
-          <div className="space-y-10">
+        ))}
 
-            {/* Section 1: MCQs */}
-            <section>
-              <h2 className="text-xl font-bold text-indigo-700 bg-indigo-50 inline-block px-4 py-2 rounded-lg mb-6">
-                Part 1: Multiple Choice (10 Questions)
-              </h2>
-              <div className="grid gap-6">
-                {mcqs.map((q, i) => (
-                  <div key={i} className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                    <label className="block font-semibold text-slate-800 mb-3">{q}</label>
-                    <select
-                      className="w-full md:w-1/2 p-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-                      onChange={(e) => handleMcqChange(i, e.target.value)}
-                      defaultValue=""
-                    >
-                      <option value="" disabled>Select the best option</option>
-                      <option value="Needs Improvement">Needs Improvement</option>
-                      <option value="Average">Average</option>
-                      <option value="Good">Good</option>
-                      <option value="Excellent">Excellent</option>
-                    </select>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Section 2: Descriptive */}
-            <section>
-              <h2 className="text-xl font-bold text-indigo-700 bg-indigo-50 inline-block px-4 py-2 rounded-lg mb-6">
-                Part 2: Descriptive Analysis (5 Questions)
-              </h2>
-              <div className="grid gap-6">
-                {descriptive.map((q, i) => (
-                  <div key={i} className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                    <label className="block font-semibold text-slate-800 mb-3">{q}</label>
-                    <textarea
-                      className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none min-h-[100px] resize-y transition-all"
-                      placeholder="Type your detailed answer here..."
-                      onChange={(e) => handleDescChange(i, e.target.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Submit Button */}
-            <div className="pt-6 pb-12 flex justify-end">
-              <button
-                onClick={handleSubmit}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2"
-              >
-                <span>Submit Assessment</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-              </button>
-            </div>
-
-          </div>
-        )}
-      </div>
+        <button type="submit" className="submit-btn">
+          Generate SWOT
+        </button>
+      </form>
     </div>
-  );
-}
 
-export default App;
+    {/* Output */}
+    {swot && (
+      <div className="output-card">
+        <h3 className="output-title">SWOT for {formData.name}</h3>
+        <p><strong>Strength:</strong> {swot.S}</p>
+        <p><strong>Weakness:</strong> {swot.W}</p>
+        <p><strong>Opportunity:</strong> {swot.O}</p>
+        <p><strong>Threat:</strong> {swot.T}</p>
+      </div>
+    )}
+  </div>
+);
+
+}
