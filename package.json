@@ -21,6 +21,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
+    "@google/genai": "^1.30.0",
     "@octokit/rest": "^22.0.1"
   }
 }
