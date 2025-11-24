@@ -21,6 +21,9 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "@octokit/rest": "^22.0.1"
+    "@octokit/rest": "^22.0.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "pdfkit": "^0.17.2"
   }
 }
