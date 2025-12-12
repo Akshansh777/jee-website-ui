@@ -95,6 +95,69 @@ export default function StudentSwotForm() {
         <div className="swot-box"><b>Weakness:</b> {finalSWOT.W}</div>
         <div className="swot-box"><b>Opportunity:</b> {finalSWOT.O}</div>
         <div className="swot-box"><b>Threat:</b> {finalSWOT.T}</div>
+
+        {/* ----------- NEW BUTTONS ADDED BELOW ------------ */}
+
+      {/* Download Report Button */}
+      <button
+        style={{
+          marginTop: "25px",
+          padding: "12px 20px",
+          backgroundColor: "#6C63FF",
+          color: "white",
+          border: "none",
+          borderRadius: "10px",
+          cursor: "pointer",
+          fontSize: "16px",
+          width: "100%",
+        }}
+      >
+        Download Full Report
+      </button>
+
+      {/* Sample Report Button */}
+      <a
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "inline-block",
+          marginTop: "15px",
+          padding: "12px 20px",
+          backgroundColor: "#007bff",
+          color: "white",
+          borderRadius: "10px",
+          textDecoration: "none",
+          fontSize: "15px",
+          width: "100%",
+          textAlign: "center",
+        }}
+      >
+        View Sample Report
+      </a>
+
+      {/* Dropdown of Report Contents */}
+      <details style={{ marginTop: "20px", textAlign: "left" }}>
+        <summary
+          style={{
+            cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "17px",
+            padding: "10px 0"
+          }}
+        >
+          What will your report contain?
+        </summary>
+
+        <ul style={{ marginTop: "10px", lineHeight: "1.8", fontSize: "15px" }}>
+          <li>Your Single Biggest Barrier</li>
+          <li>Health and Energy Profiler</li>
+          <li>The JEEsociety 40-Day Surgical Roadmap</li>
+          <li>Error Pattern Profiler</li>
+          <li>REF Study Analyst</li>
+        </ul>
+      </details>
+        
       </div>
     );
   }
