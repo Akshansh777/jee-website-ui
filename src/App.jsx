@@ -294,94 +294,186 @@ export default function StudentSwotForm() {
 
   const submit = () => calculateSWOT();
 
-  // -------------------- SWOT PAGE --------------------
-  if (showSWOT) {
-    return (
-      <div className="swot-container">
-        <h2>Your SWOT</h2>
+ 
+ // -------------------- SWOT PAGE + PERCENTILES --------------------
+if (showSWOT) {
+  
+  // -------------------- SCORING ENGINE --------------------
 
-        <div className="swot-box"><b>Strength:</b> {finalSWOT.S}</div>
-        <div className="swot-box"><b>Weakness:</b> {finalSWOT.W}</div>
-        <div className="swot-box"><b>Opportunity:</b> {finalSWOT.O}</div>
-        <div className="swot-box"><b>Threat:</b> {finalSWOT.T}</div>
+  // 1. JEEsociety Score (S_JS)
+  const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
+  let RJS = 0;
 
-        <div
-  style={{
-    display: "flex",
-    gap: "15px",
-    justifyContent: "center",
-    marginTop: "30px",
-  }}
->
-  {/* Download Button */}
-  <button
-    onClick={() => alert("Download Coming Soon")}
-    style={{
-      padding: "12px 24px",
-      borderRadius: "12px",
-      background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
-      color: "white",
-      fontSize: "16px",
-      border: "none",
-      cursor: "pointer",
-      transition: "0.2s ease",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-    }}
-    onMouseEnter={(e) => {
-      e.target.style.transform = "scale(1.05)";
-      e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
-    }}
-    onMouseLeave={(e) => {
-      e.target.style.transform = "scale(1)";
-      e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-    }}
-  >
-    Download Full Report
-  </button>
+  momentumQs.forEach((qid) => {
+    const q = QUESTIONS.find((x) => x.id === qid);
+    const ansIndex = Number(answers[qid]);
+    RJS += q.weights[ansIndex] || 0;
+  });
 
-  {/* Sample Report Button */}
-  <button
-    onClick={() => alert("Sample Report Coming Soon")}
-    style={{
-      padding: "12px 24px",
-      borderRadius: "12px",
-      background: "#1e90ff",
-      color: "white",
-      fontSize: "16px",
-      border: "none",
-      cursor: "pointer",
-      transition: "0.2s ease",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-    }}
-    onMouseEnter={(e) => {
-      e.target.style.transform = "scale(1.05)";
-      e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
-    }}
-    onMouseLeave={(e) => {
-      e.target.style.transform = "scale(1)";
-      e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-    }}
-  >
-    View Sample Report
-  </button>
-</div>
+  const SJS = 30 + RJS; // final momentum score
+
+  // 2. Baseline Percentile (P_base) from Q18
+  const q18 = QUESTIONS.find((q) => q.id === "q18");
+  const PBase = q18.weights[Number(answers["q18"])] || 0;
+
+  // 3. Time Factor T (from Q17)
+  const q17 = QUESTIONS.find((q) => q.id === "q17");
+  const T = q17.weights[Number(answers["q17"])] || 1.0;
+
+  // 4. Projected Percentile (P_Exp)
+  const PExp =
+    PBase +
+    ((SJS - 50) / 30) * 1.5 +
+    (T - 1.0) * 0.5;
+
+  // 5. Potential Target Score
+  const PTarget =
+    90.0 +
+    (T / 2.0) * 5.0 +
+    ((80 - SJS) / 80) * 4.0;
+
+  // 6. Potential Percentile (P_Pot)
+  let PPot = Math.max(PExp, PTarget);
+  if (PPot > 99.7) PPot = 99.7; // marketing constraint
 
 
-        <details style={{ marginTop: "20px" }}>
-          <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
-            What will your report contain?
-          </summary>
-          <ul style={{ marginTop: "10px", lineHeight: "1.7" }}>
-            <li>Your Single Biggest Barrier</li>
-            <li>Health and Energy Profiler</li>
-            <li>The JEEsociety 40-Day Surgical Roadmap</li>
-            <li>Error Pattern Profiler</li>
-            <li>REF Study Analyst</li>
-          </ul>
-        </details>
+  // -------------------- RESULT PAGE UI --------------------
+  return (
+    <div className="swot-container">
+
+      <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
+
+      {/* ----------- THREE RESULT CARDS ----------- */}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
+        
+        {/* JEEsociety Score */}
+        <div style={{
+          background: "#edf0ff",
+          padding: "18px",
+          borderRadius: "12px",
+          border: "2px solid #6a11cb",
+          fontSize: "18px",
+          fontWeight: "600"
+        }}>
+          JEEsociety Score : <span style={{ color: "#6a11cb" }}>{SJS.toFixed(1)}</span>
+        </div>
+
+        {/* Projected Percentile */}
+        <div style={{
+          background: "#e7fff2",
+          padding: "18px",
+          borderRadius: "12px",
+          border: "2px solid #1db954",
+          fontSize: "18px",
+          fontWeight: "600"
+        }}>
+          Projected Percentile : <span style={{ color: "#1db954" }}>{PExp.toFixed(2)}%</span>
+        </div>
+
+        {/* Potential Percentile */}
+        <div style={{
+          background: "#fff5db",
+          padding: "18px",
+          borderRadius: "12px",
+          border: "2px solid #ff9900",
+          fontSize: "18px",
+          fontWeight: "600"
+        }}>
+          Potential Percentile : <span style={{ color: "#ff7a00" }}>{PPot.toFixed(2)}%</span>
+        </div>
+
       </div>
-    );
-  }
+
+
+      {/* ---------------- SWOT ---------------- */}
+      <h2>Your SWOT</h2>
+
+      <div className="swot-box"><b>Strength:</b> {finalSWOT.S}</div>
+      <div className="swot-box"><b>Weakness:</b> {finalSWOT.W}</div>
+      <div className="swot-box"><b>Opportunity:</b> {finalSWOT.O}</div>
+      <div className="swot-box"><b>Threat:</b> {finalSWOT.T}</div>
+
+      {/* ---- Buttons ---- */}
+      <div
+        style={{
+          display: "flex",
+          gap: "15px",
+          justifyContent: "center",
+          marginTop: "30px",
+        }}
+      >
+        <button
+          onClick={() => alert("Download Coming Soon")}
+          style={{
+            padding: "12px 24px",
+            borderRadius: "12px",
+            background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
+            color: "white",
+            fontSize: "16px",
+            border: "none",
+            cursor: "pointer",
+            transition: "0.2s ease",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.05)";
+              e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+            }}
+            >
+            Download Full Report
+        </button>
+
+{/* Sample Report Button */}
+        <button
+          onClick={() => alert("Sample Report Coming Soon")}
+          style={{
+            padding: "12px 24px",
+            borderRadius: "12px",
+            background: "#1e90ff",
+            color: "white",
+            fontSize: "16px",
+            border: "none",
+            cursor: "pointer",
+            transition: "0.2s ease",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2)", }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.05)";
+              e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
+          }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = "scale(1)";
+                e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+          }}
+        >
+          View Sample Report
+        </button>
+      </div>
+
+
+      {/* ----------- REPORT CONTENT DROPDOWN (unchanged) ----------- */}
+      <details style={{ marginTop: "20px" }}>
+        <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
+          What will your report contain?
+        </summary>
+        <ul style={{ marginTop: "10px", lineHeight: "1.7" }}>
+          <li>Your Single Biggest Barrier</li>
+          <li>Health and Energy Profiler</li>
+          <li>The JEEsociety 40-Day Surgical Roadmap</li>
+          <li>Error Pattern Profiler</li>
+          <li>REF Study Analyst</li>
+        </ul>
+      </details>
+
+    </div>
+  );
+}
+
+
 
   // -------------------- QUESTION PAGE --------------------
   const q = QUESTIONS[step];
@@ -423,6 +515,7 @@ export default function StudentSwotForm() {
               borderRadius: "10px",
               border: "1px solid #ccc",
               fontSize: "16px",
+              boxSizing: "border-box",
             }}
             placeholder="Type your answer..."
           />
