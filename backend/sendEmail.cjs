@@ -1,22 +1,35 @@
 require("dotenv").config();
 const { Resend } = require("resend");
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendReport(toEmail, pdfBuffer) {
-  return await resend.emails.send({
-    from: "JEE Society <onboarding@resend.dev>",
-    to: toEmail,
-    subject: "Your JEEsociety Report",
-    html: "<p>Your personalized report is attached.</p>",
-    attachments: [
-      {
-        filename: "report.pdf",
-        content: pdfBuffer.toString("base64"),
-        encoding: "base64",
-        type: "application/pdf"
-      }
-    ]
-  });
+  try {
+    // 1. Convert the raw data to a standard Node.js Buffer
+    const finalBuffer = Buffer.from(pdfBuffer);
+
+    console.log(`Preparing to send email. Attachment size: ${finalBuffer.length} bytes`);
+
+    // 2. Send the email with the buffer
+    const data = await resend.emails.send({
+      from: "JEE Society <onboarding@resend.dev>",
+      to: toEmail,
+      subject: "Your JEEsociety Report",
+      html: "<p>Here is your personalized SWOT analysis report from JEEsociety.</p>",
+      attachments: [
+        {
+          filename: "JEEsociety_Report.pdf",
+          content: finalBuffer, // Sending the Buffer directly
+        },
+      ],
+    });
+
+    console.log("Resend API Response:", data);
+    return data;
+  } catch (error) {
+    console.error("Resend Error:", error);
+    throw error;
+  }
 }
 
 module.exports = sendReport;

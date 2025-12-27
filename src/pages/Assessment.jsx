@@ -8,16 +8,18 @@ import {
   ThreatResponses,
 } from "../ResponseBank";
 
+// -------------------- QUESTIONS DATA --------------------
 const QUESTIONS = [
   {
     id: "name",
     type: "text",
     question: "What is your name?"
   },
-
-  // Q1
+  // Q1 -> Strength (Primary)
   {
     id: "q1",
+    swot: "S",
+    impact: "primary",
     question: "Q1. Your Consistency Meter",
     options: [
       "The Machine: I study every single day without fail, hitting all my targets.",
@@ -27,10 +29,11 @@ const QUESTIONS = [
     ],
     weights: [10, 6, 4, 0]
   },
-
-  // Q2
+  // Q2 -> Strength (Secondary)
   {
     id: "q2",
+    swot: "S",
+    impact: "secondary",
     question: "Q2. Your \"Deep Work\" Reality",
     options: [
       "Deep Focus: 6+ hours of pure, phone-free study (excluding lectures).",
@@ -40,10 +43,11 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 3, 0]
   },
-
-  // Q3
+  // Q3 -> Weakness (Primary)
   {
     id: "q3",
+    swot: "W",
+    impact: "primary",
     question: "Q3. Your Syllabus Status:",
     options: [
       "On Track: 80%+ Syllabus done with proper problem solving.",
@@ -53,10 +57,11 @@ const QUESTIONS = [
     ],
     weights: [10, 6, 2, 2]
   },
-
-  // Q4
+  // Q4 -> Weakness (Secondary)
   {
     id: "q4",
+    swot: "W",
+    impact: "secondary",
     question: "Q4. How is your Physics (Honestly)?",
     options: [
       "Strong: I can solve JEE Mains PYQs accurately under timed practice now. [Perfect ROI]",
@@ -66,8 +71,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 3, 0]
   },
-
-  // Q5
+  // Q5 (Standard)
   {
     id: "q5",
     question: "Q5. How is your Chemistry(Honestly)?",
@@ -79,8 +83,7 @@ const QUESTIONS = [
     ],
     weights: [10, 6, 2, 4]
   },
-
-  // Q6
+  // Q6 (Standard)
   {
     id: "q6",
     question: "Q6. How is your Mathematics(Honestly)?",
@@ -92,8 +95,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 2, 3]
   },
-
-  // Q7
+  // Q7 (Standard)
   {
     id: "q7",
     question: "Q7. How is your Recall Strength in an exam setting?",
@@ -105,8 +107,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 4, 0]
   },
-
-  // Q8
+  // Q8 (Standard)
   {
     id: "q8",
     question: "Q8. Go and solve JEE Mains PYQs of any chapter of Maths for an hour. Then choose an option that matches closely:",
@@ -118,8 +119,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 3, 0]
   },
-
-  // Q9
+  // Q9 (Standard)
   {
     id: "q9",
     question: "Q9. Tell us about your Attention span:",
@@ -131,8 +131,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 3, 0]
   },
-
-  // Q10 (no weights — used for text)
+  // Q10 (Standard)
   {
     id: "q10",
     question: "Q10. The \"Error Pattern\" (Why do you generally lose marks?)",
@@ -144,8 +143,7 @@ const QUESTIONS = [
     ],
     weights: [0, 0, 0, 0]
   },
-
-  // Q12
+  // Q12 (Standard)
   {
     id: "q12",
     question: "Q12. This is a special question. You need to be utmost sincere while answering this. How is your mindset currently:",
@@ -157,8 +155,7 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 4, 0]
   },
-
-  // Q11
+  // Q11 (Standard)
   {
     id: "q11",
     question: "Q11. Reflect on your inner self. Which among these is your \"Single Biggest Barrier\" (The Root Cause)",
@@ -170,10 +167,11 @@ const QUESTIONS = [
     ],
     weights: [0, 0, 0, 0]
   },
-
-  // Q13
+  // Q13 -> Opportunity (Primary)
   {
     id: "q13",
+    swot: "O",
+    impact: "primary",
     question: "Q13. Tell us about your Energy Levels:",
     options: [
       "High Voltage: I feel energetic all day; I exercise/walk specifically to stay fit. [Sustainable]",
@@ -183,10 +181,11 @@ const QUESTIONS = [
     ],
     weights: [10, 6, 3, 4]
   },
-
-  // Q14
+  // Q14 -> Opportunity (Secondary)
   {
     id: "q14",
+    swot: "O",
+    impact: "secondary",
     question: "Q14. How is your health recently?",
     options: [
       "I am fit and take good care of my body [Good]",
@@ -196,10 +195,11 @@ const QUESTIONS = [
     ],
     weights: [10, 4, 0, 6]
   },
-
-  // Q15
+  // Q15 -> Threat (Primary)
   {
     id: "q15",
+    swot: "T",
+    impact: "primary",
     question: "Q15. How is your Study Environment",
     options: [
       "The Bunker: Private room, silence, zero distractions. [Ideal]",
@@ -209,10 +209,11 @@ const QUESTIONS = [
     ],
     weights: [10, 7, 4, 0]
   },
-
-  // Q16
+  // Q16 -> Threat (Secondary)
   {
     id: "q16",
+    swot: "T",
+    impact: "secondary",
     question: "Q16. How exactly are your parents involved in your JEE preparation?",
     options: [
       "The Rock: They are supportive, don't stress much about marks, and ensure I eat/sleep well. [Asset]",
@@ -222,7 +223,6 @@ const QUESTIONS = [
     ],
     weights: [10, 4, 6, 3]
   },
-
   // Q17
   {
     id: "q17",
@@ -235,7 +235,6 @@ const QUESTIONS = [
     ],
     weights: [0.5, 1.0, 1.5, 2.0]
   },
-
   // Q18
   {
     id: "q18",
@@ -250,19 +249,24 @@ const QUESTIONS = [
   }
 ];
 
-
 export default function StudentSwotForm() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  // Progress (exclude name question)
-const TOTAL_QUESTIONS = 18; // q1 → q18
-const currentQuestionIndex = Math.max(step - 1, 0); // skip name
-const progressPercent = Math.min(
-  Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100),
-  100
-);
   const [showSWOT, setShowSWOT] = useState(false);
   const [finalSWOT, setFinalSWOT] = useState({ S: "", W: "", O: "", T: "" });
+  
+  // -- NEW STATES FOR MODAL --
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
+
+  // Progress (exclude name question)
+  const TOTAL_QUESTIONS = 18;
+  const currentQuestionIndex = Math.max(step - 1, 0); 
+  const progressPercent = Math.min(
+    Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100),
+    100
+  );
 
   const handleChange = (value) => {
     setAnswers({ ...answers, [QUESTIONS[step].id]: value });
@@ -301,127 +305,134 @@ const progressPercent = Math.min(
 
   const submit = () => calculateSWOT();
 
- 
- // -------------------- SWOT PAGE + PERCENTILES --------------------
-if (showSWOT) {
-  
-  // -------------------- SCORING ENGINE --------------------
+  // --------------------------------------------------------
+  // NEW: HANDLE REPORT SENDING
+  // --------------------------------------------------------
+  const handleSendReport = async () => {
+    if (!email || !email.includes("@")) {
+      alert("Please enter a valid email address.");
+      return;
+    }
 
-  // 1. JEEsociety Score (S_JS)
-  const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
-  let RJS = 0;
+    setIsSending(true);
 
-  momentumQs.forEach((qid) => {
-    const q = QUESTIONS.find((x) => x.id === qid);
-    const ansIndex = Number(answers[qid]);
-    RJS += q.weights[ansIndex] || 0;
-  });
+    // Re-calculate stats to send to backend
+    // (We reuse the logic from the rendering part below)
+    const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
+    let RJS = 0;
+    momentumQs.forEach((qid) => {
+      const q = QUESTIONS.find((x) => x.id === qid);
+      const ansIndex = Number(answers[qid]);
+      RJS += q.weights[ansIndex] || 0;
+    });
+    const SJS = 30 + RJS; // Score
 
-  const SJS = 30 + RJS; // final momentum score
+    // Prepare payload
+    const payload = {
+      email: email,
+      name: answers["name"] || "Future IITian",
+      score: SJS.toFixed(1),
+      swot: {
+        strengths: finalSWOT.S,
+        weaknesses: finalSWOT.W,
+        opportunities: finalSWOT.O,
+        threats: finalSWOT.T
+      },
+      // You can expand this recommendation logic later
+      recommendations: "Focus on your flagged weaknesses. Use the Opportunity areas to gain extra marks. Avoid the threats listed in your analysis."
+    };
 
-  // 2. Baseline Percentile (P_base) from Q18
-  const q18 = QUESTIONS.find((q) => q.id === "q18");
-  const PBase = q18.weights[Number(answers["q18"])] || 0;
+    try {
+      // NOTE: Ensure your backend is running on port 3000 to avoid conflict with Vite (5000)
+      const response = await fetch("http://localhost:3000/send-dynamic-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-  // 3. Time Factor T (from Q17)
-  const q17 = QUESTIONS.find((q) => q.id === "q17");
-  const T = q17.weights[Number(answers["q17"])] || 1.0;
+      const data = await response.json();
 
-  // 4. Projected Percentile (P_Exp)
-  const PExp =
-    PBase +
-    ((SJS - 50) / 30) * 1.5 +
-    (T - 1.0) * 0.5;
-
-  // 5. Potential Target Score
-  const PTarget =
-    90.0 +
-    (T / 2.0) * 5.0 +
-    ((80 - SJS) / 80) * 4.0;
-
-  // 6. Potential Percentile (P_Pot)
-  let PPot = Math.max(PExp, PTarget);
-  if (PPot > 99.7) PPot = 99.7; // marketing constraint
+      if (data.success) {
+        alert("Report sent successfully to " + email);
+        setShowEmailModal(false); // Close modal
+      } else {
+        alert("Failed to send report: " + data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error connecting to server. Make sure backend is running on port 3000.");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
 
-  // -------------------- RESULT PAGE UI --------------------
-  return (
-    <div className="swot-container">
+  // -------------------- SWOT PAGE + PERCENTILES --------------------
+  if (showSWOT) {
+    // -------------------- SCORING ENGINE --------------------
+    const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
+    let RJS = 0;
+    momentumQs.forEach((qid) => {
+      const q = QUESTIONS.find((x) => x.id === qid);
+      const ansIndex = Number(answers[qid]);
+      RJS += q.weights[ansIndex] || 0;
+    });
+    const SJS = 30 + RJS;
 
-      <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
+    const q18 = QUESTIONS.find((q) => q.id === "q18");
+    const PBase = q18.weights[Number(answers["q18"])] || 0;
+    const q17 = QUESTIONS.find((q) => q.id === "q17");
+    const T = q17.weights[Number(answers["q17"])] || 1.0;
+    const PExp = PBase + ((SJS - 50) / 30) * 1.5 + (T - 1.0) * 0.5;
+    const PTarget = 90.0 + (T / 2.0) * 5.0 + ((80 - SJS) / 80) * 4.0;
+    let PPot = Math.max(PExp, PTarget);
+    if (PPot > 99.7) PPot = 99.7; 
 
-      {/* ----------- THREE RESULT CARDS ----------- */}
+    return (
+      <div className="swot-container">
+        <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
-        
-        {/* JEEsociety Score */}
-        <div style={{
-          background: "#edf0ff",
-          padding: "18px",
-          borderRadius: "12px",
-          border: "2px solid #6a11cb",
-          fontSize: "18px",
-          fontWeight: "600"
-        }}>
-          JEEsociety Score : <span style={{ color: "#6a11cb" }}>{SJS.toFixed(1)}</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
+          {/* Score Cards */}
+          <div style={{
+            background: "#edf0ff", padding: "18px", borderRadius: "12px",
+            border: "2px solid #6a11cb", fontSize: "18px", fontWeight: "600"
+          }}>
+            JEEsociety Score : <span style={{ color: "#6a11cb" }}>{SJS.toFixed(1)}</span>
+          </div>
+          <div style={{
+            background: "#e7fff2", padding: "18px", borderRadius: "12px",
+            border: "2px solid #1db954", fontSize: "18px", fontWeight: "600"
+          }}>
+            Projected Percentile : <span style={{ color: "#1db954" }}>{PExp.toFixed(2)}%</span>
+          </div>
+          <div style={{
+            background: "#fff5db", padding: "18px", borderRadius: "12px",
+            border: "2px solid #ff9900", fontSize: "18px", fontWeight: "600"
+          }}>
+            Potential Percentile : <span style={{ color: "#ff7a00" }}>{PPot.toFixed(2)}%</span>
+          </div>
         </div>
 
-        {/* Projected Percentile */}
-        <div style={{
-          background: "#e7fff2",
-          padding: "18px",
-          borderRadius: "12px",
-          border: "2px solid #1db954",
-          fontSize: "18px",
-          fontWeight: "600"
-        }}>
-          Projected Percentile : <span style={{ color: "#1db954" }}>{PExp.toFixed(2)}%</span>
-        </div>
+        {/* SWOT Boxes with Classes for CSS */}
+        <h2>Your SWOT</h2>
+        <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
+        <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
+        <div className="swot-box opportunity"><b>Opportunity:</b> {finalSWOT.O}</div>
+        <div className="swot-box threat"><b>Threat:</b> {finalSWOT.T}</div>
 
-        {/* Potential Percentile */}
-        <div style={{
-          background: "#fff5db",
-          padding: "18px",
-          borderRadius: "12px",
-          border: "2px solid #ff9900",
-          fontSize: "18px",
-          fontWeight: "600"
-        }}>
-          Potential Percentile : <span style={{ color: "#ff7a00" }}>{PPot.toFixed(2)}%</span>
-        </div>
-
-      </div>
-
-
-      {/* ---------------- SWOT ---------------- */}
-      <h2>Your SWOT</h2>
-
-      <div className="swot-box"><b>Strength:</b> {finalSWOT.S}</div>
-      <div className="swot-box"><b>Weakness:</b> {finalSWOT.W}</div>
-      <div className="swot-box"><b>Opportunity:</b> {finalSWOT.O}</div>
-      <div className="swot-box"><b>Threat:</b> {finalSWOT.T}</div>
-
-      {/* ---- Buttons ---- */}
-      <div
-        style={{
-          display: "flex",
-          gap: "15px",
-          justifyContent: "center",
-          marginTop: "30px",
-        }}
-      >
-        <button
-          onClick={() => alert("Download Coming Soon")}
-          style={{
-            padding: "12px 24px",
-            borderRadius: "12px",
-            background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
-            color: "white",
-            fontSize: "16px",
-            border: "none",
-            cursor: "pointer",
-            transition: "0.2s ease",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
+          
+          {/* DOWNLOAD BUTTON TRIGGERS MODAL */}
+          <button
+            onClick={() => setShowEmailModal(true)}
+            style={{
+              padding: "12px 24px", borderRadius: "12px",
+              background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
+              color: "white", fontSize: "16px", border: "none",
+              cursor: "pointer", transition: "0.2s ease",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
             }}
             onMouseEnter={(e) => {
               e.target.style.transform = "scale(1.05)";
@@ -431,281 +442,214 @@ if (showSWOT) {
               e.target.style.transform = "scale(1)";
               e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
             }}
-            >
+          >
             Download Full Report
-        </button>
+          </button>
 
-{/* Sample Report Button */}
-        <button
-          onClick={() => alert("Sample Report Coming Soon")}
-          style={{
-            padding: "12px 24px",
-            borderRadius: "12px",
-            background: "#1e90ff",
-            color: "white",
-            fontSize: "16px",
-            border: "none",
-            cursor: "pointer",
-            transition: "0.2s ease",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)", }}
+          <button
+            onClick={() => alert("Sample Report Coming Soon")}
+            style={{
+              padding: "12px 24px", borderRadius: "12px",
+              background: "#1e90ff", color: "white", fontSize: "16px",
+              border: "none", cursor: "pointer", transition: "0.2s ease",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+            }}
             onMouseEnter={(e) => {
               e.target.style.transform = "scale(1.05)";
               e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
-          }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "scale(1)";
-                e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-          }}
-        >
-          View Sample Report
-        </button>
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+            }}
+          >
+            View Sample Report
+          </button>
+        </div>
+
+        {/* Report Content Details */}
+        <details style={{ marginTop: "20px" }}>
+          <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
+            What will your report contain?
+          </summary>
+          <ul style={{ marginTop: "10px", lineHeight: "1.7" }}>
+            <li>Your Single Biggest Barrier</li>
+            <li>Health and Energy Profiler</li>
+            <li>The JEEsociety 40-Day Surgical Roadmap</li>
+            <li>Error Pattern Profiler</li>
+            <li>REF Study Analyst</li>
+          </ul>
+        </details>
+
+        {/* ---------------- EMAIL MODAL ---------------- */}
+        {showEmailModal && (
+          <div style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(5px)",
+            display: "flex", justifyContent: "center", alignItems: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white", padding: "30px", borderRadius: "16px",
+              width: "90%", maxWidth: "400px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
+              textAlign: "center", animation: "slideUp 0.4s ease"
+            }}>
+              <h3 style={{ fontSize: "22px", marginBottom: "15px", color: "#333" }}>
+                Receive Your Full Report
+              </h3>
+              <p style={{ color: "#666", marginBottom: "20px", fontSize: "15px" }}>
+                Enter your email address to get the detailed PDF report sent directly to your inbox.
+              </p>
+              
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  width: "100%", padding: "12px", borderRadius: "8px",
+                  border: "1px solid #ddd", fontSize: "16px", marginBottom: "20px",
+                  boxSizing: "border-box", outlineColor: "#4b6bff"
+                }}
+              />
+
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button 
+                  onClick={() => setShowEmailModal(false)}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: "8px", border: "none",
+                    background: "#f0f0f0", color: "#555", fontWeight: "600",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSendReport}
+                  disabled={isSending}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: "8px", border: "none",
+                    background: isSending ? "#ccc" : "linear-gradient(90deg, #4b6bff, #7b2fff)",
+                    color: "white", fontWeight: "600", cursor: isSending ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {isSending ? "Sending..." : "Send Report"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
-
-
-      {/* ----------- REPORT CONTENT DROPDOWN (unchanged) ----------- */}
-      <details style={{ marginTop: "20px" }}>
-        <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
-          What will your report contain?
-        </summary>
-        <ul style={{ marginTop: "10px", lineHeight: "1.7" }}>
-          <li>Your Single Biggest Barrier</li>
-          <li>Health and Energy Profiler</li>
-          <li>The JEEsociety 40-Day Surgical Roadmap</li>
-          <li>Error Pattern Profiler</li>
-          <li>REF Study Analyst</li>
-        </ul>
-      </details>
-
-    </div>
-  );
-}
-
-
+    );
+  }
 
   // -------------------- QUESTION PAGE --------------------
   const q = QUESTIONS[step];
 
   return (
-    <div
-  style={{
-    minHeight: "100vh",
-    background: "#fafafa",
-    padding: "20px 12px",
-  }}
->
-
-      <div style={{
-  maxWidth: "720px",
-  margin: "0 auto",
-}}>
-  <div
-    style={{
-      background: "#fff",
-      padding: "28px",
-      borderRadius: "18px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-    }}
-  >
-{/* Header */}
-<div style={{
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "20px"
-}}>
-  <div style={{
-  display: "flex",
-  alignItems: "center",
-  gap: "8px"
-}}>
-  {/* Cap Icon */}
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <path
-      d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"
-      fill="#c62828"
-    />
-    <path
-      d="M5 13v4c0 1.66 3.58 3 7 3s7-1.34 7-3v-4"
-      fill="#c62828"
-      opacity="0.85"
-    />
-  </svg>
-
-  {/* Text */}
- <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    lineHeight: "1",
-  }}
->
-  {/* Logo Text — SAME AS LANDING */}
-  <div className="brand">
-    JEE<span className="brand-light">society</span>
-  </div>
-</div>
-</div>
-
-
-  <div style={{ fontSize: "14px", color: "#999" }}>
-    {progressPercent}% Complete
-  </div>
-</div>
-
-        {/* Progress Header */}
-<div style={{ marginBottom: "25px" }}>
-  <div style={{
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "14px",
-    color: "#777",
-    marginBottom: "8px"
-  }}>
-    <span>
-      Question {Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)} of {TOTAL_QUESTIONS}
-    </span>
-    <span>{progressPercent}%</span>
-  </div>
-
-  <div style={{
-    height: "6px",
-    background: "#eee",
-    borderRadius: "10px",
-    overflow: "hidden"
-  }}>
-    <div style={{
-      height: "100%",
-      width: `${progressPercent}%`,
-      background: "#c62828",
-      transition: "width 0.4s ease"
-    }} />
-  </div>
-</div>
-
-        <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "20px" }}>
-          {q.question}
-        </h2>
-
-        {/* TEXT INPUT */}
-        {q.type === "text" ? (
-          <input
-            type="text"
-            value={answers[q.id] || ""}
-            onChange={(e) => handleChange(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "12px",
-              borderRadius: "10px",
-              border: "1px solid #ccc",
-              fontSize: "16px",
-              boxSizing: "border-box",
-            }}
-            placeholder="Type your answer..."
-          />
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-  {q.options.map((opt, idx) => {
-    const isSelected = answers[q.id] == idx;
-
-    return (
-      <div
-        key={idx}
-        onClick={() => handleChange(idx)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          padding: "18px 20px",
-          borderRadius: "14px",
-          cursor: "pointer",
-          border: isSelected ? "2px solid #c62828" : "1px solid #e0e0e0",
-          background: isSelected ? "#c62828" : "#fff",
-          color: isSelected ? "white" : "#000",
-          transition: "all 0.25s ease"
-        }}
-        onMouseEnter={(e) => {
-          if (!isSelected) e.currentTarget.style.background = "#f8eaea";
-        }}
-        onMouseLeave={(e) => {
-          if (!isSelected) e.currentTarget.style.background = "#fff";
-        }}
-      >
+    <div style={{ minHeight: "100vh", background: "#fafafa", padding: "20px 12px" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto" }}>
         <div style={{
-  minWidth: "24px",
-  minHeight: "24px",
-  width: "24px",
-  height: "24px",
-  flexShrink: 0,
-  borderRadius: "50%",
-  border: `2px solid ${isSelected ? "white" : "#bbb"}`,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontWeight: "900",
-  fontSize: "14px",
-  letterSpacing: "0.5px",
-fontFamily: `"Arial Narrow", "Helvetica Neue", Arial, sans-serif`,
-lineHeight: "1",
+          background: "#fff", padding: "28px", borderRadius: "18px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
+        }}>
+          {/* Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" fill="#c62828" />
+                <path d="M5 13v4c0 1.66 3.58 3 7 3s7-1.34 7-3v-4" fill="#c62828" opacity="0.85" />
+              </svg>
+              <div className="brand">JEE<span className="brand-light">society</span></div>
+            </div>
+            <div style={{ fontSize: "14px", color: "#999" }}>{progressPercent}% Complete</div>
+          </div>
 
-}}>
+          {/* Progress Header */}
+          <div style={{ marginBottom: "25px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#777", marginBottom: "8px" }}>
+              <span>Question {Math.min(currentQuestionIndex + 1, TOTAL_QUESTIONS)} of {TOTAL_QUESTIONS}</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${progressPercent}%`, background: "#c62828", transition: "width 0.4s ease" }} />
+            </div>
+          </div>
 
-          {String.fromCharCode(65 + idx)}
+          <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "20px" }}>{q.question}</h2>
+
+          {/* INPUTS */}
+          {q.type === "text" ? (
+            <input
+              type="text"
+              value={answers[q.id] || ""}
+              onChange={(e) => handleChange(e.target.value)}
+              style={{
+                width: "100%", padding: "12px", borderRadius: "10px",
+                border: "1px solid #ccc", fontSize: "16px", boxSizing: "border-box"
+              }}
+              placeholder="Type your answer..."
+            />
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              {q.options.map((opt, idx) => {
+                const isSelected = answers[q.id] == idx;
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => handleChange(idx)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: "14px",
+                      padding: "18px 20px", borderRadius: "14px", cursor: "pointer",
+                      border: isSelected ? "2px solid #c62828" : "1px solid #e0e0e0",
+                      background: isSelected ? "#c62828" : "#fff",
+                      color: isSelected ? "white" : "#000",
+                      transition: "all 0.25s ease"
+                    }}
+                    onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = "#f8eaea"; }}
+                    onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = "#fff"; }}
+                  >
+                    <div style={{
+                      minWidth: "24px", minHeight: "24px", width: "24px", height: "24px",
+                      flexShrink: 0, borderRadius: "50%",
+                      border: `2px solid ${isSelected ? "white" : "#bbb"}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontWeight: "900", fontSize: "14px", fontFamily: "Arial", lineHeight: "1"
+                    }}>
+                      {String.fromCharCode(65 + idx)}
+                    </div>
+                    <div style={{ fontSize: "16px", lineHeight: "1.45" }}>{opt}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* BUTTONS */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "35px", gap: "16px" }}>
+            {step > 0 && (
+              <button
+                onClick={() => setStep(step - 1)}
+                style={{ flex: 1, padding: "14px", borderRadius: "12px", background: "#fff", border: "1px solid #ddd", cursor: "pointer", fontSize: "15px" }}
+              >
+                ← Back
+              </button>
+            )}
+            <button
+              onClick={step === QUESTIONS.length - 1 ? submit : next}
+              disabled={answers[q.id] === undefined}
+              style={{
+                flex: 1, padding: "14px", borderRadius: "12px", background: "#c62828",
+                color: "white", border: "none", cursor: "pointer", fontSize: "15px",
+                opacity: answers[q.id] === undefined ? 0.5 : 1
+              }}
+            >
+              {step === QUESTIONS.length - 1 ? "Submit" : "Next →"}
+            </button>
+          </div>
+
         </div>
-
-        <div style={{ fontSize: "16px", lineHeight: "1.45" }}>
-          {opt}
-        </div>
-      </div>
-    );
-  })}
-</div>
-
-        )}
-
-        {/* BUTTONS */}
-        <div style={{
-  display: "flex",
-  justifyContent: "space-between",
-  marginTop: "35px",
-  gap: "16px"
-}}>
-  {step > 0 && (
-    <button
-      onClick={() => setStep(step - 1)}
-      style={{
-        flex: 1,
-        padding: "14px",
-        borderRadius: "12px",
-        background: "#fff",
-        border: "1px solid #ddd",
-        cursor: "pointer",
-        fontSize: "15px"
-      }}
-    >
-      ← Back
-    </button>
-  )}
-
-  <button
-    onClick={step === QUESTIONS.length - 1 ? submit : next}
-    disabled={answers[q.id] === undefined}
-    style={{
-      flex: 1,
-      padding: "14px",
-      borderRadius: "12px",
-      background: "#c62828",
-      color: "white",
-      border: "none",
-      cursor: "pointer",
-      fontSize: "15px",
-      opacity: answers[q.id] === undefined ? 0.5 : 1
-    }}
-  >
-    {step === QUESTIONS.length - 1 ? "Submit" : "Next →"}
-  </button>
-</div>
-</div>
       </div>
     </div>
   );
