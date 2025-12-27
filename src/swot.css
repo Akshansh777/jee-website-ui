@@ -203,19 +203,19 @@
 }
 
 /* S, W, O, T Color Themes */
-.swot-box:nth-child(2) { /* Strength */
+.swot-box:nth-child(4) { /* Strength */
   background: linear-gradient(135deg, #00c853, #009624);
 }
 
-.swot-box:nth-child(3) { /* Weakness */
+.swot-box:nth-child(5) { /* Weakness */
   background: linear-gradient(135deg, #d50000, #9b0000);
 }
 
-.swot-box:nth-child(4) { /* Opportunity */
+.swot-box:nth-child(6) { /* Opportunity */
   background: linear-gradient(135deg, #2962ff, #0039cb);
 }
 
-.swot-box:nth-child(5) { /* Threat */
+.swot-box:nth-child(7) { /* Threat */
   background: linear-gradient(135deg, #ff6d00, #e65100);
 }
 
