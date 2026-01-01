@@ -449,8 +449,9 @@ const response = await fetch(`${API_URL}/send-dynamic-report`, {
             Download Full Report
           </button>
 
+          {/* SAMPLE REPORT BUTTON (Updated) */}
           <button
-            onClick={() => alert("Sample Report Coming Soon")}
+            onClick={() => window.open("/sample-report.pdf", "_blank")}
             style={{
               padding: "12px 24px", borderRadius: "12px",
               background: "#1e90ff", color: "white", fontSize: "16px",
@@ -475,13 +476,13 @@ const response = await fetch(`${API_URL}/send-dynamic-report`, {
           <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
             What will your report contain?
           </summary>
-          <ul style={{ marginTop: "10px", lineHeight: "1.7" }}>
-            <li>Your Single Biggest Barrier</li>
-            <li>Health and Energy Profiler</li>
-            <li>The JEEsociety 40-Day Surgical Roadmap</li>
-            <li>Error Pattern Profiler</li>
-            <li>REF Study Analyst</li>
-          </ul>
+          <ul style={{ paddingLeft: "20px", lineHeight: "1.8", color: "#555" }}>
+              <li><strong>Trajectory Insight:</strong> Visual graph of your predicted vs. potential growth.</li>
+              <li><strong>Detailed SWOT Snapshot:</strong> Deep dive into your Strengths, Weaknesses, Opportunities, and Threats.</li>
+              <li><strong>Health & Environment Audit:</strong> Analysis of your physical stamina and study space.</li>
+              <li><strong>Key Barriers:</strong> Identifying the specific root causes holding you back.</li>
+              <li><strong>Personalized Strategy:</strong> A tailored roadmap and recommendations to improve your score.</li>
+            </ul>
         </details>
 
         {/* ---------------- EMAIL MODAL ---------------- */}
