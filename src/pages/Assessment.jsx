@@ -344,7 +344,10 @@ export default function StudentSwotForm() {
 
     try {
       // NOTE: Ensure your backend is running on port 3000 to avoid conflict with Vite (5000)
-      const response = await fetch("http://localhost:3000/send-dynamic-report", {
+      // Use the environment variable, or fallback to localhost for safety
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+const response = await fetch(`${API_URL}/send-dynamic-report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
