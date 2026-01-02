@@ -104,7 +104,7 @@ export default function Landing() {
     marginTop: "-41px",
     marginBottom: "10px"
   }}>
-    ⏱ Takes only 5 minutes · 💯 100% Free
+    ⏱ Takes only 5 minutes
   </p>
 </div>
       {/* Features */}
@@ -133,7 +133,7 @@ export default function Landing() {
 
   <div className="trust-stats">
     <div> 
-      <h2>10,000+</h2>
+      <h2>1000+</h2>
       <span>Assessments Taken</span>
     </div>
 
@@ -142,13 +142,6 @@ export default function Landing() {
     <div>
       <h2>4.9/5</h2>
       <span>Student Rating</span>
-    </div>
-
-    <div className="trust-v-divider" />
-
-    <div>
-      <h2>100%</h2>
-      <span>Free Forever</span>
     </div>
   </div>
 </section>
@@ -174,8 +167,7 @@ export default function Landing() {
 
   <p className="quote">"𝐈 𝐚𝐦 𝐭𝐡𝐞 𝐁𝐞𝐬𝐭 "</p>
 
-  <p className="creator">
-    Created by Sreyash Bhaiya (IIT Bombay) |
+  <p className="footer-link">
     <a
       href="https://www.youtube.com/@SreyashBhaiyaIITB"
       target="_blank"
