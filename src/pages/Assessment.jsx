@@ -64,10 +64,10 @@ const QUESTIONS = [
     impact: "secondary",
     question: "Q4. How is your Physics (Honestly)?",
     options: [
-      "Strong: I can solve JEE Mains PYQs accurately under timed practice now. [Perfect ROI]",
-      "Average: I understand concepts but get stuck on tricky questions; I am giving it high priority. [Good ROI]",
-      "Weak: I struggle with basics; I am ignoring them to focus on Chemistry/Math. [Bad Strategy]",
-      "Comfort Trap: Physics is my strongest subject, yet I still spend 50%+ of my time watching videos on Physics because I like it. [ROI Disaster - Triggers Warning]"
+      "Strong: I can solve JEE Mains PYQs accurately under timed practice now. ",
+      "Average: I understand concepts but get stuck on tricky questions; I am giving it high priority. ",
+      "Weak: I struggle with basics; I am ignoring them to focus on Chemistry/Math. ",
+      "Comfort Trap: Physics is my strongest subject, yet I still spend 50%+ of my time watching videos on Physics because I like it. "
     ],
     weights: [10, 7, 3, 0]
   },
@@ -76,10 +76,10 @@ const QUESTIONS = [
     id: "q5",
     question: "Q5. How is your Chemistry(Honestly)?",
     options: [
-      "Strong: NCERT is on my tips; I score high consistently. [Perfect ROI]",
-      "Volatile: I memorize it, but forget it in 3 days; I spend time re-reading notes constantly. [Needs \"Recall\" Advice]",
-      "Weak: I hate Chemistry; I barely touch this subject. [Critical Failure Point]",
-      "Average: I am good at any one part(OC/OC/P), and bad at one. [Balance is lacking]"
+      "Strong: NCERT is on my tips; I score high consistently. ",
+      "Volatile: I memorize it, but forget it in 3 days; I spend time re-reading notes constantly. ",
+      "Weak: I hate Chemistry; I barely touch this subject. ",
+      "Average: I am good at any one part(OC/OC/P), and bad at one. "
     ],
     weights: [10, 6, 2, 4]
   },
@@ -88,10 +88,10 @@ const QUESTIONS = [
     id: "q6",
     question: "Q6. How is your Mathematics(Honestly)?",
     options: [
-      "Killer: I love Math; I love solving complex problems in a given time. [High Asset]",
-      "Survivor: I only target specific high-weightage chapters (Vector/3D) to clear cutoff. [Smart Strategy]",
-      "Phobia: I am terrified of Math; I haven't solved a question in weeks. [Avoidance]",
-      "The Ego Lifter: I am weak, but I waste hours trying to solve impossible problems just to prove I can. [Time Sink]"
+      "Killer: I love Math; I love solving complex problems in a given time. ",
+      "Survivor: I only target specific high-weightage chapters (Vector/3D) to clear cutoff. ",
+      "Phobia: I am terrified of Math; I haven't solved a question in weeks. ",
+      "The Ego Lifter: I am weak, but I waste hours trying to solve impossible problems just to prove I can. "
     ],
     weights: [10, 7, 2, 3]
   },
@@ -100,10 +100,10 @@ const QUESTIONS = [
     id: "q7",
     question: "Q7. How is your Recall Strength in an exam setting?",
     options: [
-      "Crystal Clear: I recall every formula while solving questions. [High Score]",
-      "Blurry: I recognize the concept when I see the solution, but can't recall it during the question. [Illusion of Competence]",
-      "Leaky Bucket: I study a chapter, but 1 week later it feels like I never studied it. [Needs Spaced Repetition]",
-      "Blank Out: I panic in tests and forget even the basics I knew well. [Anxiety Issue]"
+      "Crystal Clear: I recall every formula while solving questions. ",
+      "Blurry: I recognize the concept when I see the solution, but can't recall it during the question. ",
+      "Leaky Bucket: I study a chapter, but 1 week later it feels like I never studied it. ",
+      "Blank Out: I panic in tests and forget even the basics I knew well. "
     ],
     weights: [10, 7, 4, 0]
   },
@@ -136,10 +136,10 @@ const QUESTIONS = [
     id: "q10",
     question: "Q10. The \"Error Pattern\" (Why do you generally lose marks?)",
     options: [
-      "Conceptual: I honestly didn't know the theory/logic. [Knowledge Gap]",
-      "Silly/Calculation: I knew it, but made a silly mistake or read the question wrong. [Focus Gap]",
-      "Ego/Time: I got stuck on one hard question and wasted 10 minutes, ruining the paper. [Strategy Gap]",
-      "Fear/Skipping: I skipped easy questions because the chapter \"looked\" scary. [Confidence Gap]"
+      "Conceptual: I honestly didn't know the theory/logic. ",
+      "Silly/Calculation: I knew it, but made a silly mistake or read the question wrong. ",
+      "Ego/Time: I got stuck on one hard question and wasted 10 minutes, ruining the paper. ",
+      "Fear/Skipping: I skipped easy questions because the chapter \"looked\" scary. "
     ],
     weights: [0, 0, 0, 0]
   },
@@ -160,10 +160,10 @@ const QUESTIONS = [
     id: "q11",
     question: "Q11. Reflect on your inner self. Which among these is your \"Single Biggest Barrier\" (The Root Cause)",
     options: [
-      "The Collector: I have TBs of lectures/PDFs, but I don't solve questions. [Action Paralysis]",
-      "The Fear: I am scared of getting questions wrong, so I keep re-reading theory. [Perfectionism]",
-      "The Dopamine Addict: Phone, Social Media, and YouTube Shorts are destroying my day. [Distraction]",
-      "The Mountain: My backlog is so huge I don't know where to start, so I don't start at all. [Overwhelm]"
+      "The Collector: I have TBs of lectures/PDFs, but I don't solve questions. ",
+      "The Fear: I am scared of getting questions wrong, so I keep re-reading theory. ",
+      "The Dopamine Addict: Phone, Social Media, and YouTube Shorts are destroying my day. ",
+      "The Mountain: My backlog is so huge I don't know where to start, so I don't start at all. "
     ],
     weights: [0, 0, 0, 0]
   },
@@ -174,10 +174,10 @@ const QUESTIONS = [
     impact: "primary",
     question: "Q13. Tell us about your Energy Levels:",
     options: [
-      "High Voltage: I feel energetic all day; I exercise/walk specifically to stay fit. [Sustainable]",
-      "Afternoon Crash: I start well, but after 2 PM I feel sleepy and lethargic. [Diet/Sleep Issue]",
-      "Zombie Mode: I study long hours but feel exhausted and \"foggy\" the whole time. [Burnout Warning]",
-      "Night Owl: I stay awake till 4 AM, but wake up tired and waste the morning. [Circadian Rhythm Issue]"
+      "High Voltage: I feel energetic all day; I exercise/walk specifically to stay fit. ",
+      "Afternoon Crash: I start well, but after 2 PM I feel sleepy and lethargic. ",
+      "Zombie Mode: I study long hours but feel exhausted and \"foggy\" the whole time. ",
+      "Night Owl: I stay awake till 4 AM, but wake up tired and waste the morning. "
     ],
     weights: [10, 6, 3, 4]
   },
@@ -188,10 +188,10 @@ const QUESTIONS = [
     impact: "secondary",
     question: "Q14. How is your health recently?",
     options: [
-      "I am fit and take good care of my body [Good]",
-      "I fall ill frequently (cold, headaches) [Bad - Cognitive Decline]",
-      "I have major diseases and treatments going on currently [Crash Imminent]",
-      "My body is physically not fit, but I have started taking care  [Aware bull unhealthy]"
+      "I am fit and take good care of my body ",
+      "I fall ill frequently (cold, headaches) ",
+      "I have major diseases and treatments going on currently ",
+      "My body is physically not fit, but I have started taking care  "
     ],
     weights: [10, 4, 0, 6]
   },
@@ -202,10 +202,10 @@ const QUESTIONS = [
     impact: "primary",
     question: "Q15. How is your Study Environment",
     options: [
-      "The Bunker: Private room, silence, zero distractions. [Ideal]",
-      "The Library: I go out to study, which helps, but travel wastes time. [Good]",
-      "The Living Room: I study in a noisy area; people keep disturbing me. [Focus Killer]",
-      "The Chaos: Toxic environment/arguments at home make it hard to concentrate. [Emotional Drain]"
+      "The Bunker: Private room, silence, zero distractions. ",
+      "The Library: I go out to study, which helps, but travel wastes time. ",
+      "The Living Room: I study in a noisy area; people keep disturbing me. ",
+      "The Chaos: Toxic environment/arguments at home make it hard to concentrate. "
     ],
     weights: [10, 7, 4, 0]
   },
@@ -216,10 +216,10 @@ const QUESTIONS = [
     impact: "secondary",
     question: "Q16. How exactly are your parents involved in your JEE preparation?",
     options: [
-      "The Rock: They are supportive, don't stress much about marks, and ensure I eat/sleep well. [Asset]",
-      "The Pressure Cooker: They compare me to Sharma ji ka beta and scold me for low marks. [Stress Trigger]",
-      "The Silent: They don't really know what I'm doing; I'm on my own. [Neutral]",
-      "The Manager: They micromanage my schedule (\"Why aren't you studying?\"), which annoys me. [Friction]"
+      "The Rock: They are supportive, don't stress much about marks, and ensure I eat/sleep well. ",
+      "The Pressure Cooker: They compare me to Sharma ji ka beta and scold me for low marks. ",
+      "The Silent: They don't really know what I'm doing; I'm on my own. ",
+      "The Manager: They micromanage my schedule (\"Why aren't you studying?\"), which annoys me. "
     ],
     weights: [10, 4, 6, 3]
   },
@@ -228,10 +228,10 @@ const QUESTIONS = [
     id: "q17",
     question: "Q17. The Countdown (Time Horizon)",
     options: [
-      "The Final Lap: My target exam is in less than a month. [High Urgency - Mistakes are fatal]",
-      "The Mid-Game: I have 2 to 6 months left. [Medium Urgency]",
-      "The Marathon: I have 6 months to 1 Year left. [Low Urgency - High potential for course correction]",
-      "I have more than a year left now. [No Urgency]"
+      "The Final Lap: My target exam is in less than a month. ",
+      "The Mid-Game: I have 2 to 6 months left. ",
+      "The Marathon: I have 6 months to 1 Year left. ",
+      "I have more than a year left now. "
     ],
     weights: [0.5, 1.0, 1.5, 2.0]
   },
@@ -240,10 +240,10 @@ const QUESTIONS = [
     id: "q18",
     question: "Q18. How much on an average do you score in a JEE Mains mock test?",
     options: [
-      "The High Flyer: I consistently score 180+ in mocks (or I am confident I can solve 60%+ of the paper today). [High Baseline]",
-      "The Mid-Range: I usually score between 100 - 170 (or I can solve roughly half the paper). [Average Baseline]",
-      "The Struggler: I am stuck below 100 (or I struggle to solve even 10 questions correctly). [Critical Baseline]",
-      "The Untested: I haven't taken a single mock yet, but I honestly feel unprepared and scared to face the paper. [Fear/Avoidance Indicator]"
+      "The High Flyer: I consistently score 180+ in mocks (or I am confident I can solve 60%+ of the paper today). ",
+      "The Mid-Range: I usually score between 100 - 170 (or I can solve roughly half the paper). ",
+      "The Struggler: I am stuck below 100 (or I struggle to solve even 10 questions correctly). ",
+      "The Untested: I haven't taken a single mock yet, but I honestly feel unprepared and scared to face the paper. "
     ],
     weights: [98, 93, 80, 68]
   }
