@@ -12,7 +12,7 @@ async function sendReport(toEmail, pdfBuffer) {
 
     // 2. Send the email with the buffer
     const data = await resend.emails.send({
-      from: "JEE Society <onboarding@resend.dev>",
+      from: "JEE Society <support@jeesociety.in>",
       to: toEmail,
       subject: "Your JEEsociety Report",
       html: "<p>Here is your personalized SWOT analysis report from JEEsociety.</p>",
