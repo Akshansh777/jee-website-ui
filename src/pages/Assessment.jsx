@@ -242,7 +242,7 @@ const QUESTIONS = [
     options: [
       "The High Flyer: I consistently score 180+ in mocks (or I am confident I can solve 60%+ of the paper today). ",
       "The Mid-Range: I usually score between 100 - 170 (or I can solve roughly half the paper). ",
-      "The Struggler: I am stuck below 100 (or I struggle to solve even 10 questions correctly). ",
+      "The Struggler: I am stuck below 100 (or I struggle to solve even 20 questions correctly). ",
       "The Untested: I haven't taken a single mock yet, but I honestly feel unprepared and scared to face the paper. "
     ],
     weights: [98, 93, 80, 68]
@@ -421,8 +421,6 @@ const response = await fetch(`${API_URL}/send-dynamic-report`, {
         <h2>Your SWOT</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
-        <div className="swot-box opportunity"><b>Opportunity:</b> {finalSWOT.O}</div>
-        <div className="swot-box threat"><b>Threat:</b> {finalSWOT.T}</div>
 
         {/* Buttons */}
         <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
