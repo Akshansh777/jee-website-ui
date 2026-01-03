@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "student_name": "Random Student",
+    "generated_at": "2026-01-04T10:00:00Z"
+  },
+  "solutionSnippets": {
+    "Q4_A": {
+      "one_line": "Physics king 😎",
+      "mentor_note": "Student performs great in physics.",
+      "action_24h": "Solve 20 PYQs",
+      "action_7d": "Do 2 section tests"
+    },
+    "Q5_B": {
+      "one_line": "Chem is shaky",
+      "mentor_note": "Needs structured recall",
+      "action_24h": "Flashcards",
+      "action_7d": "1–3–7 rule"
+    },
+    "Q6_C": {
+      "one_line": "Math fear detected",
+      "mentor_note": "Steady exposure needed",
+      "action_24h": "10 easy problems",
+      "action_7d": "60 questions"
+    }
+  }
+}

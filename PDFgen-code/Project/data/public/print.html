@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>JEE Society Diagnostic Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+
+body {
+  background:#f4f6fb;
+  font-family: -apple-system, BlinkMacSystemFont, Inter, Segoe UI, Roboto, Arial;
+  padding:40px 0;
+}
+
+.container {
+  width: 820px;
+  margin: auto;
+  background:white;
+  padding:32px 40px;
+  border-radius:14px;
+  box-shadow:0 15px 35px rgba(0,0,0,0.06);
+}
+
+.header-title {
+  font-size:22px;
+  font-weight:900;
+}
+
+.meta {
+  font-size:12px;
+  color:#666;
+  margin-top:4px;
+}
+
+.section {
+  margin-top:28px;
+  padding-bottom:18px;
+  border-bottom:1px solid #eee;
+}
+
+.section h2 {
+  font-size:18px;
+  margin-bottom:8px;
+}
+
+.card {
+  margin-top:14px;
+  padding:18px;
+  background:#fffaf3;
+  border-radius:12px;
+  border:1px solid #ffd6a5;
+}
+
+.card h3 {
+  margin:0 0 6px;
+  font-size:15px;
+}
+
+.small {
+  color:#777;
+  margin-bottom:10px;
+}
+
+strong.label {
+  display:block;
+  margin-top:8px;
+  color:#222;
+}
+
+.graph-box {
+  margin-top:10px;
+  padding:14px;
+  background:#fafafa;
+  border-radius:10px;
+  border:1px solid #e6e6e6;
+}
+
+.speedometer {
+  width: 400px;
+  height: 200px;
+  margin:auto;
+}
+
+.footer-text {
+  text-align:center;
+  font-size:10px;
+  margin-top:30px;
+  color:#777;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="header-title">JEE Possibility Diagnostic Report</div>
+    <div class="meta">
+      Student: <span id="studentName">Student</span><br>
+      Generated: <span id="generatedAt"></span>
+    </div>
+  </div>
+
+  <div id="contentArea"></div>
+
+  <div class="footer-text">
+    This is a personalised psychological + performance diagnostic generated using validated preparation intelligence models.
+  </div>
+
+</div>
+
+<script>
+
+// ------------------------------------
+function safe(d,f="-") { return (d!==undefined && d!==null) ? d : f }
+// ------------------------------------
+function card(title, text){
+  return `
+  <div class="card">
+    <h3>${title}</h3>
+    <div>${safe(text)}</div>
+  </div>`;
+}
+// ------------------------------------
+function drawLineGraph(canvas, color) {
+  const ctx = canvas.getContext("2d");
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(20,160);
+  ctx.lineTo(180,80);
+  ctx.stroke();
+}
+// ------------------------------------
+function drawSpeedometer(value){
+  const canvas = document.getElementById("mindGauge");
+  const ctx = canvas.getContext("2d");
+
+  const start = Math.PI;
+  const end = 2 * Math.PI;
+
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = "#ddd";
+  ctx.beginPath();
+  ctx.arc(200, 180, 120, start, end);
+  ctx.stroke();
+
+  ctx.strokeStyle = "#4CAF50";
+  ctx.beginPath();
+  ctx.arc(200, 180, 120, start, start + (value/100)*Math.PI);
+  ctx.stroke();
+}
+
+// ------------------------------------
+async function start() {
+  let payload = window.REPORT_JSON;
+
+  // fallback dev mode
+  if(!payload || !payload.solutionSnippets){
+    const res = await fetch("/public/dev_preview.json");
+    payload = await res.json();
+  }
+
+  const S = payload.solutionSnippets;
+  document.getElementById("studentName").textContent =
+    payload.metadata?.student_name || "Student";
+
+  document.getElementById("generatedAt").textContent =
+    new Date().toISOString();
+
+  let html = "";
+
+  // ---------------- EXECUTIVE SUMMARY ----------------
+  html += `
+  <div class="section">
+    <h2>Executive Summary</h2>
+
+    ${card("Your Current Trajectory Reality",
+      "Based on your current consistency, execution quality and discipline, your projected result remains below where it CAN be. You have potential, but there is leakage in execution.")}
+
+    <div class="graph-box">
+      <canvas id="redGraph" width="200" height="180"></canvas>
+    </div>
+
+    ${card("If You Apply This Report Honestly",
+      "This report does not give motivation. It gives disciplined execution. If you follow it honestly, your projected performance significantly improves.")}
+
+    <div class="graph-box">
+      <canvas id="greenGraph" width="200" height="180"></canvas>
+    </div>
+  </div>
+  `;
+
+  // ---------------- PCM STRATEGY ----------------
+  html += `
+  <div class="section">
+    <h2>PCM Strategy Analyzer</h2>
+    ${card("Physics Strategy", safe(S.Q4_A?.mentor_note))}
+    ${card("Chemistry Strategy", safe(S.Q5_A?.mentor_note))}
+    ${card("Mathematics Strategy", safe(S.Q6_A?.mentor_note))}
+  </div>
+  `;
+
+  // ---------------- REF ----------------
+  html += `
+  <div class="section">
+    <h2>REF Study Analyst</h2>
+
+    ${card("Recall Strength", safe(S.Q7_A?.mentor_note))}
+    ${card("Efficiency", safe(S.Q8_A?.mentor_note))}
+    ${card("Focus Potential", safe(S.Q9_A?.mentor_note))}
+    ${card("Error Pattern Profiler", safe(S.Q10_A?.mentor_note))}
+  </div>
+  `;
+
+  // ---------------- MINDSET ----------------
+  html += `
+  <div class="section">
+    <h2>Mindset Readiness</h2>
+
+    ${card("Where Your Mindset Truly Stands",
+      "Cracking JEE demands mindset. Currently your belief is present, but laziness, distraction & emotional dependency reduce execution. Your competition is not toppers. Your competition is your own inconsistency.")}
+
+    <canvas id="mindGauge" class="speedometer"></canvas>
+  </div>
+  `;
+
+  // ---------------- BIGGEST BARRIER ----------------
+  html += `
+  <div class="section">
+    <h2>Your Biggest Barrier</h2>
+    ${card("Single Highest Blocker", safe(S.Q11_A?.mentor_note))}
+  </div>
+  `;
+
+  // ---------------- HEALTH ----------------
+  html += `
+  <div class="section">
+    <h2>Health • Energy • Environment</h2>
+
+    ${card("Energy & Physical State", safe(S.Q13_A?.mentor_note))}
+    ${card("Health Impact", safe(S.Q14_A?.mentor_note))}
+    ${card("Study Environment Reality", safe(S.Q15_A?.mentor_note))}
+    ${card("Parents & Family Dynamics", safe(S.Q16_A?.mentor_note))}
+  </div>
+  `;
+
+  // ---------------- ROADMAP ----------------
+  html += `
+  <div class="section">
+    <h2>JEEsociety 40-Day Surgical Roadmap</h2>
+    ${card("Execution Plan",
+      "Focus on low effort - high return chapters first. Fix repeated mistakes. Build exam realism. Reduce emotional subject bias. Execute with discipline.")}
+  </div>
+  `;
+
+  // ---------------- CONCLUSION ----------------
+  html += `
+  <div class="section">
+    <h2>Conclusion</h2>
+    ${card("Summary",
+      "You are capable — execution is weak. Fix routine, improve discipline, build stable mocks, protect health, stabilize mindset, follow structured roadmap.")}
+  </div>
+  `;
+
+  document.getElementById("contentArea").innerHTML = html;
+
+  drawLineGraph(document.getElementById("redGraph"), "red");
+  drawLineGraph(document.getElementById("greenGraph"), "green");
+  drawSpeedometer(65);
+
+  window.__PDF_READY = true;
+}
+
+window.onload = start;
+
+</script>
+
+</body>
+</html>

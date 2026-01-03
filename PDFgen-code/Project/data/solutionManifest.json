@@ -1,0 +1,55 @@
+{
+"Q1_A": {
+  "question": "Your Consistency Meter",
+  "option_label": "The Machine",
+  "one_line": "You already have the rare skill of showing up daily. Now it is time to make those hours smarter.",
+  "mentor_note": "Daily consistency is not common. Most students struggle to even sit every day. You do not. That means your discipline muscle is strong. But consistency alone does not guarantee rank. Direction and feedback decide results. If you repeat the same mistakes daily, effort will stay effort, not progress. You must regularly check what is working and what is not. Weekly tests and honest analysis convert effort into marks. Once feedback enters the loop, your preparation accelerates fast. You are not far from a breakthrough. You just need sharper correction, not more hours.",
+  "action_24h": "Attempt one timed sectional test today under exam conditions. Do not pause or check solutions midway. After the test, analyse calmly. Write down the top three reasons for lost marks. Concept gap, silly error, or time issue. Then write one clear fix for each reason. This analysis is more important than the test itself.",
+  "action_7d": "Schedule two short sectional tests this week. Fix specific days and times. After each test, do a dedicated error correction session of at least 60 minutes. Track whether the same mistake repeats. If yes, change your method. By the end of the week, you should see fewer repeated errors."
+},
+
+"Q1_B": {
+  "question": "Your Consistency Meter",
+  "option_label": "The Weekend Warrior",
+  "one_line": "You can work hard, but only when motivation is high. Real progress comes from discipline on low days.",
+  "mentor_note": "Good days prove you have the ability. Bad days reveal your system. Right now, your system collapses when energy is low. That creates guilt and inconsistency. The solution is not more motivation. It is a minimum habit that you follow even on tired days. A small non-negotiable task protects momentum and self-trust. Once momentum is protected, confidence slowly rebuilds. Long streaks are built from boring days, not inspired ones.",
+  "action_24h": "Sit now and do 45 minutes of pure problem solving. No phone. No switching subjects. Choose one topic and solve continuously. Even if the quality feels average, complete the session. The goal today is showing up, not perfection.",
+  "action_7d": "Fix a daily 45-minute minimum study rule. No matter how the day goes, this block must be completed. Track completion on paper. Do not compensate for missed days. The goal is an unbroken chain of seven days."
+},
+
+"Q1_C": {
+  "question": "Your Consistency Meter",
+  "option_label": "The Burst Worker",
+  "one_line": "You work in spikes, but your brain needs rhythm, not explosions.",
+  "mentor_note": "Long study marathons feel productive and heroic. But memory does not form well under exhaustion. Your brain prefers repeated exposure over extreme sessions. Burst working also causes burnout and irregular sleep. A steady routine builds stronger recall with less stress. You will remember more with fewer total hours if the schedule is stable. Discipline here is about stopping on time, not pushing harder.",
+  "action_24h": "Limit today’s study to six focused hours. Break it into clean blocks. Do not extend late into the night. Sleep before 11:30 PM. This resets your energy cycle and improves recall tomorrow.",
+  "action_7d": "Follow a five-day routine with four to five focused hours daily. Keep start and end times fixed. Track how your energy and memory feel. You should feel calmer and sharper by the end of the week."
+},
+
+"Q1_D": {
+  "question": "Your Consistency Meter",
+  "option_label": "The Procrastinator",
+  "one_line": "You think a lot. Execution is missing.",
+  "mentor_note": "Planning feels productive because it avoids discomfort. Execution feels risky because results are uncertain. But confidence only comes from finished tasks. Over-planning delays learning. Shrink planning time and expand doing time. One completed task daily rebuilds trust in yourself faster than any new timetable. Momentum fixes motivation, not the other way around.",
+  "action_24h": "Make a short plan tonight for tomorrow. No more than five tasks. Include a 15-minute morning workout before study. Then sleep. Tomorrow, execute without modifying the plan.",
+  "action_7d": "Plan each night for the next day. Keep plans realistic. Finish tasks before sleeping. At the end of the week, review how many days you fully executed. Aim for progress, not perfection."
+},
+
+"Q2_A": {
+  "question": "Your Deep Work Reality",
+  "option_label": "Deep Focus",
+  "one_line": "You can focus deeply. That is a major advantage.",
+  "mentor_note": "Six or more distraction-free hours are rare. Most students never reach this state. But deep focus must be used correctly. If you spend it on passive reading or easy tasks, the advantage is wasted. Deep work should attack weak chapters, difficult problems, and timed solving. Pair focus with feedback. That is where rank improvement happens.",
+  "action_24h": "Use your first deep focus block on your weakest chapter. Solve problems, not theory. Time yourself and note where your focus breaks.",
+  "action_7d": "Plan one deep focus block daily. End the week with a timed chapter test to check if deep work is converting into marks."
+},
+
+"Q2_B": {
+  "question": "Your Deep Work Reality",
+  "option_label": "Standard Grind",
+  "one_line": "You are putting in decent hours. The next jump will come from improving how those hours are used.",
+  "mentor_note": "Four to six hours of study per day is not bad at all. Many students clear JEE within this range. The issue is not time, it is structure and intensity inside those hours. If focus keeps breaking or tasks are not clearly defined, the output stays average. Right now, your study likely mixes thinking, distraction, and comfort work. That gives the feeling of effort without strong results. What you need is fewer but cleaner study blocks. One strong, focused block does more than three distracted ones. When quality improves, confidence improves automatically because you start seeing questions click faster. Another problem with the standard grind is that students underestimate recovery. Without planned breaks, attention drops silently. You should treat focus like a muscle. Use it hard, then let it recover. This balance is what allows consistency without burnout.",
+  "action_24h": "Today, plan one 90-minute phone-free study block. Choose a single subject and a single chapter. Before starting, write exactly what you will do in that block.",
+  "action_7d": "For the next seven days, schedule one compulsory deep block daily between 90 and 120 minutes. Fix the time slot so your brain expects it. Do not negotiate with yourself."
+}
+}
