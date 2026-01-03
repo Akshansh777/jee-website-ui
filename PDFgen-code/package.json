@@ -17,8 +17,7 @@
     "run": "^1.5.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build"
+    "start": "node index.js"
   },
   "browserslist": {
     "production": [

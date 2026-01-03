@@ -8,14 +8,14 @@ const puppeteer = require("puppeteer");
 
 module.exports = function registerPdfRoutes(app, options = {}) {
 
-    // FORCE JSON PARSER HERE
+  // FORCE JSON PARSER HERE
   app.use(require("express").json({ limit: "10mb" }));
 
   app.use((req, res, next) => {
     console.log(" PDF ROUTES LOGGER");
     console.log("URL:", req.originalUrl);
     console.log("Headers:", req.headers["content-type"]);
-    console.log("BODY RAW:", JSON.stringify(req.body)?.slice(0,300));
+    console.log("BODY RAW:", JSON.stringify(req.body)?.slice(0, 300));
     next();
   });
 
@@ -145,12 +145,17 @@ module.exports = function registerPdfRoutes(app, options = {}) {
         });
       }
 
+      // CLOUD RUN + LOCAL SAFE CHROMIUM
       const browser = await puppeteer.launch({
         headless: true,
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
           "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--no-zygote",
+          "--single-process",
         ],
       });
 
@@ -161,7 +166,9 @@ module.exports = function registerPdfRoutes(app, options = {}) {
       if (printPageUrl) {
         target = printPageUrl;
       } else {
-        target = "http://localhost:3001/public/print.html";
+        target =
+          "file://" +
+          path.join(__dirname, "../public/print.html");
       }
 
       console.log("🧭 Trying to open print page:", target);
