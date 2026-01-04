@@ -418,7 +418,7 @@ const response = await fetch(`${API_URL}/send-dynamic-report`, {
         </div>
 
         {/* SWOT Boxes with Classes for CSS */}
-        <h2>Your SWOT</h2>
+        <h2>Your Strength & Weaknes</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
