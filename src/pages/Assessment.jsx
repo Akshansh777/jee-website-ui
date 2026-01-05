@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../swot.css";
 
 import {
@@ -250,6 +251,7 @@ const QUESTIONS = [
 ];
 
 export default function StudentSwotForm() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showSWOT, setShowSWOT] = useState(false);
@@ -417,7 +419,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
         </div>
 
         {/* SWOT Boxes with Classes for CSS */}
-        <h2>Your Strength & Weaknes</h2>
+        <h2>Your Strength & Weakness</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
@@ -469,11 +471,32 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
         </div>
 
         {/* Report Content Details */}
-        <details style={{ marginTop: "20px" }}>
-          <summary style={{ fontWeight: "bold", fontSize: "17px" }}>
+        <details style={{ 
+          marginTop: "30px", 
+          marginBottom: "30px",
+          textAlign: "center",    // Centers the "What will your report contain?" title
+          cursor: "pointer"
+        }}>
+          <summary style={{ 
+            fontWeight: "bold", 
+            fontSize: "18px", 
+            marginBottom: "10px",
+            outline: "none"       // Removes ugly focus box on click
+          }}>
             What will your report contain?
           </summary>
-          <ul style={{ paddingLeft: "20px", lineHeight: "1.8", color: "#555" }}>
+
+          {/* display: "inline-block" -> Keeps the list centered visually 
+             textAlign: "left"       -> Aligns the text itself to the left 
+          */}
+          <ul style={{ 
+            display: "inline-block", 
+            textAlign: "left", 
+            maxWidth: "550px",     // Prevents it from getting too wide
+            paddingLeft: "20px",   // Space for bullets
+            lineHeight: "1.8", 
+            color: "#555" 
+          }}>
               <li><strong>Trajectory Insight:</strong> Visual graph of your predicted vs. potential growth.</li>
               <li><strong>Detailed SWOT Snapshot:</strong> Deep dive into your Strengths, Weaknesses, Opportunities, and Threats.</li>
               <li><strong>Health & Environment Audit:</strong> Analysis of your physical stamina and study space.</li>
@@ -540,7 +563,31 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
             </div>
           </div>
         )}
-
+<div style={{ marginTop: "40px", textAlign: "center", paddingBottom: "20px" }}>
+          <button
+            onClick={() => navigate("/")} // Go back to Home
+            style={{
+              background: "transparent",
+              border: "2px solid #e0e0e0",
+              padding: "10px 25px",
+              borderRadius: "50px",
+              color: "#666",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.borderColor = "#c62828";
+              e.target.style.color = "#c62828";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.borderColor = "#e0e0e0";
+              e.target.style.color = "#666";
+            }}
+          >
+            ← Return Home / Take Again
+          </button>
+        </div>
       </div>
     );
   }
