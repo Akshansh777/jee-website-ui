@@ -1,225 +1,108 @@
 /**
- * server/pdfRoutes.js
+ * FINAL pdfRoutes.js
+ * - Loads Manifest
+ * - Maps Answers (0->A)
+ * - Injects Data (Race Condition Fix)
+ * - Sends Email via Resend (Buffer Fix)
  */
 
 const fs = require("fs");
 const path = require("path");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// 1. LOAD MANIFEST
+const manifestPath = path.join(__dirname, "Project/data/solutionManifest.json");
+let solutionManifest = {};
+try {
+  solutionManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  console.log("✅ Manifest Loaded:", Object.keys(solutionManifest).length, "entries");
+} catch (e) {
+  console.error("❌ Manifest Error:", e.message);
+}
+
+// Helper: Map "0" -> "Q1_A"
+function mapAnswerToKey(qId, val) {
+  const map = { "0": "A", "1": "B", "2": "C", "3": "D" };
+  const letter = map[String(val)];
+  if (!letter) return null;
+  return `${qId.toUpperCase().replace("Q", "Q")}_${letter}`;
+}
 
 module.exports = function registerPdfRoutes(app, options = {}) {
+  app.use(require("express").json({ limit: "50mb" }));
 
-  // FORCE JSON PARSER HERE
-  app.use(require("express").json({ limit: "10mb" }));
+  app.post("/send-dynamic-report", async (req, res) => {
+    console.log("🔥 Report Request Received");
+    const incoming = req.body;
+    const userEmail = incoming.email || "akshanshmishra5@gmail.com";
+    const answers = incoming.answers || {};
 
-  app.use((req, res, next) => {
-    console.log(" PDF ROUTES LOGGER");
-    console.log("URL:", req.originalUrl);
-    console.log("Headers:", req.headers["content-type"]);
-    console.log("BODY RAW:", JSON.stringify(req.body)?.slice(0, 300));
-    next();
-  });
-
-  const printPageUrl = options.printPageUrl || null;
-
-  // ---------------- LOAD SOLUTION MANIFEST ----------------
-  const manifestPath = path.join(__dirname, "../data/solutionManifest.json");
-
-  let solutionManifest = {};
-
-  try {
-    const raw = fs.readFileSync(manifestPath, "utf8");
-    solutionManifest = JSON.parse(raw);
-    console.log(
-      "Loaded solution manifest:",
-      Object.keys(solutionManifest).length,
-      "entries"
-    );
-  } catch (e) {
-    console.warn(
-      "Could not load solution manifest at",
-      manifestPath,
-      e.message
-    );
-  }
-
-  // ---------------- VALIDATION ----------------
-  function validateQuestionnaire(body = {}) {
-    const errors = [];
-    const expectedQuestions = Array.from({ length: 18 }, (_, i) => `q${i + 1}`);
-
-    for (const q of expectedQuestions) {
-      if (!(q in body)) {
-        errors.push(`${q} is missing`);
-        continue;
-      }
-
-      const val = String(body[q]).trim();
-      if (!["0", "1", "2", "3"].includes(val)) {
-        errors.push(`${q} has invalid value ${val}`);
-      }
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-    };
-  }
-
-  // ---------------- MAP RESPONSES ----------------
-  function mapResponsesToKeys(formData = {}) {
-    const optionMap = { "0": "A", "1": "B", "2": "C", "3": "D" };
-    const result = [];
-
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key.startsWith("q")) {
-        const qNum = key.replace("q", "");
-        const letter = optionMap[value];
-        if (letter) result.push(`Q${qNum}_${letter}`);
+    // 2. PREPARE DATA
+    const solutionSnippets = {};
+    Object.keys(answers).forEach(qId => {
+      const key = mapAnswerToKey(qId, answers[qId]);
+      if (key && solutionManifest[key]) {
+        solutionSnippets[key] = solutionManifest[key];
       }
     });
 
-    return result;
-  }
-
-  // ---------------- /api/merge-snippets ----------------
-  app.post("/api/merge-snippets", (req, res) => {
-    try {
-      const { student_name = null, ...answers } = req.body || {};
-
-      const result = validateQuestionnaire(answers);
-      if (!result.valid) {
-        console.log("❌ Validation Failed:", result.errors);
-        return res.status(400).json({
-          ok: false,
-          error: "Invalid questionnaire data",
-          details: result.errors,
-        });
-      }
-
-      const selectedKeys = mapResponsesToKeys(answers);
-      console.log("Mapped Keys:", selectedKeys);
-
-      const solutionSnippets = {};
-      for (const k of selectedKeys) {
-        solutionSnippets[k] =
-          solutionManifest[k] || {
-            title: k,
-            question: "",
-            option_label: "",
-            one_line: "",
-            mentor_note: "",
-            action_24h: "",
-            action_7d: "",
-          };
-      }
-
-      const payload = {
-        metadata: {
-          report_id: "dev_" + Date.now(),
-          generated_at: new Date().toISOString(),
-          student_name,
-        },
-        solutionSnippets,
-      };
-
-      return res.json({ ok: true, payload });
-    } catch (err) {
-      console.error("merge-snippets error:", err);
-      return res.status(500).json({ error: err.message });
-    }
-  });
-
-  // ---------------- /generate-pdf ----------------
-  app.post("/generate-pdf", async (req, res) => {
-    console.log("🔥 /generate-pdf hit");
+    const fullPayload = {
+      ...incoming,
+      solutionSnippets 
+    };
 
     try {
-      const payload = req.body;
-      console.log("📦 Payload keys:", Object.keys(payload || {}));
-
-      if (!payload || Object.keys(payload).length === 0) {
-        console.log("❌ Empty payload");
-        return res.status(400).json({
-          error:
-            "Missing payload: POST body must contain the merged payload (metadata + solutionSnippets)",
-        });
-      }
-
-      // CLOUD RUN + LOCAL SAFE CHROMIUM
-      const browser = await puppeteer.launch({
-        headless: true,
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-          "--no-zygote",
-          "--single-process",
-        ],
+      // 3. LAUNCH BROWSER
+      const browser = await puppeteer.launch({ 
+        headless: "new", 
+        executablePath: "/usr/bin/google-chrome-stable",
+        args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"] 
       });
 
       const page = await browser.newPage();
 
-      let target;
+      // 4. INJECT DATA (CRITICAL FIX)
+      await page.evaluateOnNewDocument((data) => {
+        window.REPORT_JSON = data;
+      }, fullPayload);
 
-      if (printPageUrl) {
-        target = printPageUrl;
-      } else {
-        target =
-          "file://" +
-          path.join(__dirname, "../public/print.html");
-      }
-
-      console.log("🧭 Trying to open print page:", target);
-
-      console.log("⌛ Loading page...");
-      await page.goto(target, {
-        waitUntil: "networkidle0",
-        timeout: 40000,
-      });
-
-      console.log("✅ Page loaded. Injecting payload...");
-      await page.evaluate((d) => {
-        window.REPORT_JSON = d;
-        window.__PDF_READY = true;
-      }, payload);
-
-      console.log("🖨️ Generating PDF...");
-      const pdfBuffer = await page.pdf({
-        format: "A4",
-        printBackground: true,
-        margin: {
-          top: "16mm",
-          bottom: "16mm",
-          left: "12mm",
-          right: "12mm",
-        },
+      // 5. GENERATE PDF
+      const target = "http://localhost:8080/public/print.html";
+      await page.goto(target, { waitUntil: "networkidle0", timeout: 60000 });
+      
+      const pdfRaw = await page.pdf({
+        format: "A4", printBackground: true,
+        margin: { top: "10mm", bottom: "10mm", left: "0mm", right: "0mm" }
       });
 
       await browser.close();
-      console.log("✅ Browser closed");
+      const finalBuffer = Buffer.from(pdfRaw);
 
-      try {
-        const outPath = path.join(process.cwd(), "final_test.pdf");
-        fs.writeFileSync(outPath, pdfBuffer);
-        console.log("💾 PDF saved locally:", outPath, "bytes:", pdfBuffer.length);
-      } catch (e) {
-        console.warn("⚠️ Could not auto-save PDF:", e.message);
-      }
-
-      return res.json({
-        ok: true,
-        pdfBase64: pdfBuffer.toString("base64"),
+      // 6. SEND EMAIL
+      console.log(`📧 Sending to ${userEmail}...`);
+      const { error } = await resend.emails.send({
+        from: "JEE Society <support@jeesociety.in>",
+        to: [userEmail],
+        subject: "Your JEE Society Analysis Report",
+        html: "<p>Your detailed analysis report is attached.</p>",
+        attachments: [{ filename: "JEE_Report.pdf", content: finalBuffer }]
       });
 
+      if (error) {
+        console.error("Email Error:", error);
+        // Return success so user still gets the download link
+        return res.json({ success: true, emailStatus: "failed", pdfBase64: finalBuffer.toString("base64") });
+      }
+
+      console.log("✅ Success!");
+      return res.json({ success: true, emailStatus: "sent", pdfBase64: finalBuffer.toString("base64") });
+
     } catch (err) {
-      console.error("💥 generate-pdf crashed:", err);
-      return res
-        .status(500)
-        .json({ ok: false, error: err.message, stack: err.stack });
+      console.error("💥 Error:", err);
+      res.status(500).json({ success: false, error: err.message });
     }
   });
-
-  console.log("PDF routes registered");
 };

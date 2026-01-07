@@ -333,6 +333,7 @@ export default function StudentSwotForm() {
     const payload = {
       email: email,
       name: answers["name"] || "Future IITian",
+      answers: answers,
       score: SJS.toFixed(1),
       swot: {
         strengths: finalSWOT.S,
