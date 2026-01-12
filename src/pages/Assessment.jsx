@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../swot.css";
+import { computeScores } from "../utils/score";
 
 import {
   StrengthResponses,
@@ -224,29 +225,27 @@ const QUESTIONS = [
     ],
     weights: [10, 4, 6, 3]
   },
-  // Q17
+  // Q17 UPDATED
   {
     id: "q17",
-    question: "Q17. The Countdown (Time Horizon)",
+    question: "Q17. Which attempt are you targeting? (Time Horizon)",
     options: [
-      "The Final Lap: My target exam is in less than a month. ",
-      "The Mid-Game: I have 2 to 6 months left. ",
-      "The Marathon: I have 6 months to 1 Year left. ",
-      "I have more than a year left now. "
+      "April Attempt 2026",
+      "JEE 2027"
     ],
-    weights: [0.5, 1.0, 1.5, 2.0]
+    weights: [0, 0] 
   },
-  // Q18
+  // Q18 UPDATED
   {
     id: "q18",
-    question: "Q18. How much on an average do you score in a JEE Mains mock test?",
+    question: "Q18. In a recent full-length JEE Main–level test, where do you realistically stand?",
     options: [
-      "The High Flyer: I consistently score 180+ in mocks (or I am confident I can solve 60%+ of the paper today). ",
-      "The Mid-Range: I usually score between 100 - 170 (or I can solve roughly half the paper). ",
-      "The Struggler: I am stuck below 100 (or I struggle to solve even 20 questions correctly). ",
-      "The Untested: I haven't taken a single mock yet, but I honestly feel unprepared and scared to face the paper. "
+      "I consistently score 180+ in mocks (or I am confident I can solve 60%+ of the paper today).",
+      "I usually score between 120 - 180 (or I can solve roughly half the paper).",
+      "I am stuck between 50 - 100 (or I struggle to solve even 20 questions correctly).",
+      "I generally can’t score more than 50 marks in JEE Mains Mock Tests."
     ],
-    weights: [98, 93, 80, 68]
+    weights: [0, 0, 0, 0] 
   }
 ];
 
@@ -257,7 +256,7 @@ export default function StudentSwotForm() {
   const [showSWOT, setShowSWOT] = useState(false);
   const [finalSWOT, setFinalSWOT] = useState({ S: "", W: "", O: "", T: "" });
   
-  // -- NEW STATES FOR MODAL --
+  // -- MODAL STATES --
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [email, setEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -308,7 +307,7 @@ export default function StudentSwotForm() {
   const submit = () => calculateSWOT();
 
   // --------------------------------------------------------
-  // NEW: HANDLE REPORT SENDING
+  // HANDLE REPORT SENDING
   // --------------------------------------------------------
   const handleSendReport = async () => {
     if (!email || !email.includes("@")) {
@@ -318,37 +317,27 @@ export default function StudentSwotForm() {
 
     setIsSending(true);
 
-    // Re-calculate stats to send to backend
-    // (We reuse the logic from the rendering part below)
-    const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
-    let RJS = 0;
-    momentumQs.forEach((qid) => {
-      const q = QUESTIONS.find((x) => x.id === qid);
-      const ansIndex = Number(answers[qid]);
-      RJS += q.weights[ansIndex] || 0;
-    });
-    const SJS = 30 + RJS; // Score
+    // Calculate score using the new logic for the backend payload
+    const result = computeScores(answers);
 
     // Prepare payload
     const payload = {
       email: email,
       name: answers["name"] || "Future IITian",
       answers: answers,
-      score: SJS.toFixed(1),
+      score: result.jee_society_score, // Using new score
+      // You can also pass the projected ranges if your backend supports them
       swot: {
         strengths: finalSWOT.S,
         weaknesses: finalSWOT.W,
         opportunities: finalSWOT.O,
         threats: finalSWOT.T
       },
-      // You can expand this recommendation logic later
-      recommendations: "Focus on your flagged weaknesses. Use the Opportunity areas to gain extra marks. Avoid the threats listed in your analysis."
+      recommendations: "Focus on your flagged weaknesses. Use the Opportunity areas to gain extra marks."
     };
 
     try {
-      // NOTE: Ensure your backend is running on port 3000 to avoid conflict with Vite (5000)
-      // Use the environment variable, or fallback to localhost for safety
-const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await fetch(`${backendUrl}/send-dynamic-report`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -359,13 +348,13 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
       if (data.success) {
         alert("Report sent successfully to " + email);
-        setShowEmailModal(false); // Close modal
+        setShowEmailModal(false);
       } else {
         alert("Failed to send report: " + data.error);
       }
     } catch (error) {
       console.error(error);
-      alert("Error connecting to server. Make sure backend is running on port 3000.");
+      alert("Error connecting to server.");
     } finally {
       setIsSending(false);
     }
@@ -374,24 +363,17 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   // -------------------- SWOT PAGE + PERCENTILES --------------------
   if (showSWOT) {
-    // -------------------- SCORING ENGINE --------------------
-    const momentumQs = ["q1", "q2", "q8", "q9", "q12"];
-    let RJS = 0;
-    momentumQs.forEach((qid) => {
-      const q = QUESTIONS.find((x) => x.id === qid);
-      const ansIndex = Number(answers[qid]);
-      RJS += q.weights[ansIndex] || 0;
-    });
-    const SJS = 30 + RJS;
+    // USE THE NEW SCORING ENGINE
+    const scores = computeScores(answers);
+    const { 
+      jee_society_score, 
+      expected_percentile_range, 
+      potential_percentile_range 
+    } = scores;
 
-    const q18 = QUESTIONS.find((q) => q.id === "q18");
-    const PBase = q18.weights[Number(answers["q18"])] || 0;
-    const q17 = QUESTIONS.find((q) => q.id === "q17");
-    const T = q17.weights[Number(answers["q17"])] || 1.0;
-    const PExp = PBase + ((SJS - 50) / 30) * 1.5 + (T - 1.0) * 0.5;
-    const PTarget = 90.0 + (T / 2.0) * 5.0 + ((80 - SJS) / 80) * 4.0;
-    let PPot = Math.max(PExp, PTarget);
-    if (PPot > 99.7) PPot = 99.7; 
+    // Helper for ranges "92.5 - 94.2"
+    const expRangeStr = `${expected_percentile_range[0]}% - ${expected_percentile_range[1]}%`;
+    const potRangeStr = `${potential_percentile_range[0]}% - ${potential_percentile_range[1]}%`;
 
     return (
       <div className="swot-container">
@@ -403,23 +385,23 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
             background: "#edf0ff", padding: "18px", borderRadius: "12px",
             border: "2px solid #6a11cb", fontSize: "18px", fontWeight: "600"
           }}>
-            JEEsociety Score : <span style={{ color: "#6a11cb" }}>{SJS.toFixed(1)}</span>
+            JEEsociety Score : <span style={{ color: "#6a11cb" }}>{jee_society_score}</span>
           </div>
           <div style={{
             background: "#e7fff2", padding: "18px", borderRadius: "12px",
             border: "2px solid #1db954", fontSize: "18px", fontWeight: "600"
           }}>
-            Projected Percentile : <span style={{ color: "#1db954" }}>{PExp.toFixed(2)}%</span>
+            Expected Percentile Range : <span style={{ color: "#1db954" }}>{expRangeStr}</span>
           </div>
           <div style={{
             background: "#fff5db", padding: "18px", borderRadius: "12px",
             border: "2px solid #ff9900", fontSize: "18px", fontWeight: "600"
           }}>
-            Potential Percentile : <span style={{ color: "#ff7a00" }}>{PPot.toFixed(2)}%</span>
+            Potential Percentile Range : <span style={{ color: "#ff7a00" }}>{potRangeStr}</span>
           </div>
         </div>
 
-        {/* SWOT Boxes with Classes for CSS */}
+        {/* SWOT Boxes */}
         <h2>Your Strength & Weakness</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
@@ -427,7 +409,6 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
         {/* Buttons */}
         <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
           
-          {/* DOWNLOAD BUTTON TRIGGERS MODAL */}
           <button
             onClick={() => setShowEmailModal(true)}
             style={{
@@ -449,7 +430,6 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
             Download Full Report
           </button>
 
-          {/* SAMPLE REPORT BUTTON (Updated) */}
           <button
             onClick={() => window.open("/sample-report.pdf", "_blank")}
             style={{
@@ -475,26 +455,23 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
         <details style={{ 
           marginTop: "30px", 
           marginBottom: "30px",
-          textAlign: "center",    // Centers the "What will your report contain?" title
+          textAlign: "center",
           cursor: "pointer"
         }}>
           <summary style={{ 
             fontWeight: "bold", 
             fontSize: "18px", 
             marginBottom: "10px",
-            outline: "none"       // Removes ugly focus box on click
+            outline: "none"
           }}>
             What will your report contain?
           </summary>
 
-          {/* display: "inline-block" -> Keeps the list centered visually 
-             textAlign: "left"       -> Aligns the text itself to the left 
-          */}
           <ul style={{ 
             display: "inline-block", 
             textAlign: "left", 
-            maxWidth: "550px",     // Prevents it from getting too wide
-            paddingLeft: "20px",   // Space for bullets
+            maxWidth: "550px",
+            paddingLeft: "20px",
             lineHeight: "1.8", 
             color: "#555" 
           }}>
@@ -564,9 +541,10 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
             </div>
           </div>
         )}
-<div style={{ marginTop: "40px", textAlign: "center", paddingBottom: "20px" }}>
+
+        <div style={{ marginTop: "40px", textAlign: "center", paddingBottom: "20px" }}>
           <button
-            onClick={() => navigate("/")} // Go back to Home
+            onClick={() => navigate("/")} 
             style={{
               background: "transparent",
               border: "2px solid #e0e0e0",
