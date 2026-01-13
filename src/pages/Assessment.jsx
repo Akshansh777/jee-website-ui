@@ -249,6 +249,60 @@ const QUESTIONS = [
   }
 ];
 
+// --- HELPER COMPONENT: ---
+const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
+  const radius = 70; // Increased size (was 50)
+  const strokeWidth = 12; // Thicker border
+  const size = 180; // SVG ViewBox size
+  const center = size / 2;
+  
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (Math.min(value, max) / max) * circumference;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
+      <div style={{ width: "180px", height: "180px", position: "relative" }}>
+        <svg width="180" height="180" viewBox={`0 0 ${size} ${size}`}>
+          {/* Background Circle */}
+          <circle 
+            cx={center} cy={center} r={radius} 
+            stroke="#eee" strokeWidth={strokeWidth} fill="none" 
+          />
+          
+          {/* Progress Circle */}
+          <circle
+            cx={center} cy={center} r={radius} 
+            stroke={color} strokeWidth={strokeWidth} fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${center} ${center})`}
+            style={{ transition: "stroke-dashoffset 1s ease-out" }}
+          />
+          
+          {/* Title (JSS/EP/PP) */}
+          <text 
+            x={center} y={center - 15} 
+            textAnchor="middle" 
+            fontSize="28" fontWeight="900" fill={color}
+            style={{ filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.1))" }}
+          >
+            {title}
+          </text>
+          
+          {/* Range Text (The Numbers) - MUCH BIGGER NOW */}
+          <text 
+            x={center} y={center + 20} 
+            textAnchor="middle" 
+            fontSize="18" fontWeight="700" fill="#444"
+          >
+            {rangeText}
+          </text>
+        </svg>
+      </div>
+    </div>
+  );
+};
 export default function StudentSwotForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
@@ -372,32 +426,85 @@ export default function StudentSwotForm() {
     } = scores;
 
     // Helper for ranges "92.5 - 94.2"
-    const expRangeStr = `${expected_percentile_range[0]}% - ${expected_percentile_range[1]}%`;
-    const potRangeStr = `${potential_percentile_range[0]}% - ${potential_percentile_range[1]}%`;
+    const expRangeStr = `${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`;
+    const potRangeStr = `${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`;
 
     return (
       <div className="swot-container">
         <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
-          {/* Score Cards */}
-          <div style={{
-            background: "#edf0ff", padding: "18px", borderRadius: "12px",
-            border: "2px solid #6a11cb", fontSize: "18px", fontWeight: "600"
+          {/* --- TRIAD (PYRAMID) LAYOUT --- */}
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            marginBottom: "50px",
+            marginTop: "20px"
           }}>
-            JEEsociety Score : <span style={{ color: "#6a11cb" }}>{jee_society_score}</span>
+            
+            {/* TOP: JSS (Center) */}
+            <div style={{ marginBottom: "20px" }}>
+              <CircularScore
+                value={jee_society_score}
+                color="#6a11cb"
+                title="JSS"
+                rangeText={jee_society_score}
+              />
+            </div>
+
+            {/* BOTTOM: EP & PP (Side by Side) */}
+            <div style={{ display: "flex", gap: "60px", justifyContent: "center" }}>
+              <CircularScore
+                value={scores.expected_percentile}
+                color="#1db954"
+                title="EP"
+                rangeText={expRangeStr}
+              />
+              <CircularScore
+                value={scores.potential_percentile}
+                color="#ff7a00"
+                title="PP"
+                rangeText={potRangeStr}
+              />
+            </div>
           </div>
-          <div style={{
-            background: "#e7fff2", padding: "18px", borderRadius: "12px",
-            border: "2px solid #1db954", fontSize: "18px", fontWeight: "600"
-          }}>
-            Expected Percentile Range : <span style={{ color: "#1db954" }}>{expRangeStr}</span>
-          </div>
-          <div style={{
-            background: "#fff5db", padding: "18px", borderRadius: "12px",
-            border: "2px solid #ff9900", fontSize: "18px", fontWeight: "600"
-          }}>
-            Potential Percentile Range : <span style={{ color: "#ff7a00" }}>{potRangeStr}</span>
+
+          {/* --- DETAILED DEFINITIONS (Making Page Long) --- */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "40px" }}>
+            
+            {/* JSS Card */}
+            <div style={{ 
+              background: "#f8f9fa", padding: "20px", borderRadius: "12px", 
+              borderLeft: "5px solid #6a11cb", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+            }}>
+              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEE Society Score)</h3>
+              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
+                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means your "System" is broken, even if your "Knowledge" is good.
+              </p>
+            </div>
+
+            {/* EP Card */}
+            <div style={{ 
+              background: "#f0fff4", padding: "20px", borderRadius: "12px", 
+              borderLeft: "5px solid #1db954", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+            }}>
+              <h3 style={{ margin: "0 0 5px 0", color: "#1db954", fontSize: "18px" }}>EP (Expected Percentile)</h3>
+              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
+                If you continue <b>exactly</b> as you are today—without changing your habits—this is where you will land. This is the "Truth Mirror". It factors in your current leaks (distractions, weak revision) to predict your realistic outcome.
+              </p>
+            </div>
+
+            {/* PP Card */}
+            <div style={{ 
+              background: "#fff8e6", padding: "20px", borderRadius: "12px", 
+              borderLeft: "5px solid #ff7a00", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+            }}>
+              <h3 style={{ margin: "0 0 5px 0", color: "#ff7a00", fontSize: "18px" }}>PP (Potential Percentile)</h3>
+              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
+                This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
+              </p>
+
           </div>
         </div>
 
