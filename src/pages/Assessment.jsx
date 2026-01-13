@@ -504,7 +504,7 @@ export default function StudentSwotForm() {
               <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
                 This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
               </p>
-
+            </div>
           </div>
         </div>
 
