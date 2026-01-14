@@ -331,28 +331,35 @@ export default function StudentSwotForm() {
     if (step < QUESTIONS.length - 1) setStep(step + 1);
   };
 
+  // ✅ NEW CODE
   const calculateSWOT = () => {
-    const getIndex = (primary, secondary) => {
-      const primaryIndex = Number(primary || 0);
-      const secondaryIndex = Number(secondary || 0);
-      const noise = Math.floor(Math.random() * 5);
-      let raw = (primaryIndex * 7 + secondaryIndex * 3) % 40;
-      return (raw + noise) % 40;
+    // 1. Get the Index (0-3) of the Primary Question for each Category
+    // Strength (S) -> Q1 (Consistency)
+    // Weakness (W) -> Q3 (Syllabus)
+    // Opportunity (O) -> Q13 (Energy)
+    // Threat (T) -> Q15 (Environment)
+
+    const sIndex = Number(answers["q1"] || 0);
+    const wIndex = Number(answers["q3"] || 0);
+    const oIndex = Number(answers["q13"] || 0);
+    const tIndex = Number(answers["q15"] || 0);
+
+    // 2. Select a Random Line from that Specific Bucket
+    // We use a simple randomizer to pick one of the 5 lines in that bucket
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // 3. Fallback logic (in case of missing data)
+    const getResponse = (lib, idx) => {
+      // Check if lib[idx] exists, otherwise fall back to bucket 0
+      const bucket = lib && lib[idx] ? lib[idx] : (lib ? lib[0] : ["Data missing"]);
+      return pick(bucket);
     };
 
-    const primary = {}, secondary = {};
-
-    QUESTIONS.forEach((q) => {
-      if (!q.swot) return;
-      if (q.impact === "primary") primary[q.swot] = answers[q.id];
-      if (q.impact === "secondary") secondary[q.swot] = answers[q.id];
-    });
-
     setFinalSWOT({
-      S: StrengthResponses[getIndex(primary["S"], secondary["S"])],
-      W: WeaknessResponses[getIndex(primary["W"], secondary["W"])],
-      O: OpportunityResponses[getIndex(primary["O"], secondary["O"])],
-      T: ThreatResponses[getIndex(primary["T"], secondary["T"])],
+      S: getResponse(StrengthResponses, sIndex),
+      W: getResponse(WeaknessResponses, wIndex),
+      O: getResponse(OpportunityResponses, oIndex),
+      T: getResponse(ThreatResponses, tIndex),
     });
 
     setShowSWOT(true);
