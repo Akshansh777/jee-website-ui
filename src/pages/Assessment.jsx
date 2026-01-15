@@ -485,9 +485,9 @@ export default function StudentSwotForm() {
               background: "#f8f9fa", padding: "20px", borderRadius: "12px", 
               borderLeft: "5px solid #6a11cb", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
             }}>
-              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEE Society Score)</h3>
+              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEEsociety Score)</h3>
               <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
-                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means your "System" is broken, even if your "Knowledge" is good.
+                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means that you lack a good "system", even if your "Knowledge" is good.
               </p>
             </div>
 
