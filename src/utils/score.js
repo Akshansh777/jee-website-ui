@@ -175,7 +175,6 @@ export function computeScores(responses) {
 
   const manifestKeys = mapAnswersToManifest(responses);
 
-  }
 
   return {
   jee_society_score: format(JSS),
