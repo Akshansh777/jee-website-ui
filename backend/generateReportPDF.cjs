@@ -69,16 +69,6 @@ async function generatePDF(data) {
 </div>
 
 <div class="section">
-  <h2>SWOT Analysis</h2>
-  <div class="box">
-    <p><strong>Strengths:</strong> ${data.swot?.strengths || ""}</p>
-    <p><strong>Weaknesses:</strong> ${data.swot?.weaknesses || ""}</p>
-    <p><strong>Opportunities:</strong> ${data.swot?.opportunities || ""}</p>
-    <p><strong>Threats:</strong> ${data.swot?.threats || ""}</p>
-  </div>
-</div>
-
-<div class="section">
   <h2>PCM Strategy Analyzer</h2>
 
   <div class="box">
@@ -131,10 +121,10 @@ async function generatePDF(data) {
 
 <div class="section">
   <h2>Execution Plan</h2>
-  <ul>
+  <ol>
     ${collectActions(["q7","q8","q10","q11","q12","q13","q14","q15","q16"], data)
       .map(a => `<li>${a}</li>`).join("")}
-  </ul>
+  </ol>
 </div>
 
 <div class="section">
