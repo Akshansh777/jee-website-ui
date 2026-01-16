@@ -175,21 +175,22 @@ export function computeScores(responses) {
 
   const manifestKeys = mapAnswersToManifest(responses);
 
-
   return {
-  jee_society_score: format(JSS),
-  expected_percentile: format(P_expected),
-  expected_percentile_range: [
-    format(clamp(Expected_Range[0], 0, 99.9)),
-    format(clamp(Expected_Range[1], 0, 99.9))
-  ],
-  potential_percentile: format(P_potential),
-  potential_percentile_range: [
-    format(clamp(Potential_Range[0], 0, 99.9)),
-    format(clamp(Potential_Range[1], 0, 99.9))
-  ],
-  attempt_type: attemptType,
+    jee_society_score: format(JSS),
+    expected_percentile: format(P_expected),
+    expected_percentile_range: [
+      format(clamp(Expected_Range[0], 0, 99.9)),
+      format(clamp(Expected_Range[1], 0, 99.9))
+    ],
+    potential_percentile: format(P_potential),
+    potential_percentile_range: [
+      format(clamp(Potential_Range[0], 0, 99.9)),
+      format(clamp(Potential_Range[1], 0, 99.9))
+    ],
+    attempt_type: attemptType,
 
-  // THIS is what connects the psychology engine
-  manifestKeys
-};
+    // THIS is what connects the psychology engine
+    manifestKeys
+  };
+
+}
