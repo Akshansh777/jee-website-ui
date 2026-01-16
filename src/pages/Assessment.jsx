@@ -565,6 +565,48 @@ export default function StudentSwotForm() {
           </button>
         </div>
 
+{/* --- YOUTUBE BUTTON --- */}
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <a 
+            href="https://www.youtube.com/@SreyashBhaiyaIITB" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none" }}
+          >
+            <button
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "12px 28px", 
+                borderRadius: "50px", // Pill shape
+                background: "#FF0000", // Official YouTube Red
+                color: "white", 
+                fontSize: "16px", 
+                fontWeight: "700",
+                border: "none", 
+                cursor: "pointer", 
+                boxShadow: "0 4px 15px rgba(255, 0, 0, 0.3)", // Red glow
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.boxShadow = "0 6px 20px rgba(255, 0, 0, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 4px 15px rgba(255, 0, 0, 0.3)";
+              }}
+            >
+              {/* YouTube Vector Icon */}
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+              </svg>
+              The JEEsociety YouTube
+            </button>
+          </a>
+        </div>
+        
         {/* Report Content Details */}
         <details style={{ 
           marginTop: "30px", 
