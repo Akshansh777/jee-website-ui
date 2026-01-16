@@ -153,21 +153,44 @@ export function computeScores(responses) {
   
   // Safety check: Expected <= Potential
   if (P_expected > P_potential) {
-    P_expected = P_potential - 0.1; 
+    console.warn("Adjusting P_expected to match P_potential");
+    P_expected = P_potential - 0.1;
+  }
+
+  // -------------------------------
+  // MANIFEST KEY MAPPING (NEW)
+  // -------------------------------
+  function mapAnswersToManifest(responses) {
+    const out = {};
+    Object.keys(responses).forEach(k => {
+      if (k.startsWith("q")) {
+        const qNum = k.substring(1);
+        const idx = Number(responses[k]);
+        const letter = ["A","B","C","D"][idx] || "D";
+        out[k] = `Q${qNum}_${letter}`;
+      }
+    });
+    return out;
+  }
+
+  const manifestKeys = mapAnswersToManifest(responses);
+
   }
 
   return {
-    jee_society_score: format(JSS),
-    expected_percentile: format(P_expected), // Main value for UI reference
-    expected_percentile_range: [
-      format(clamp(Expected_Range[0], 0, 99.9)),
-      format(clamp(Expected_Range[1], 0, 99.9))
-    ],
-    potential_percentile: format(P_potential), // Main value for UI reference
-    potential_percentile_range: [
-      format(clamp(Potential_Range[0], 0, 99.9)),
-      format(clamp(Potential_Range[1], 0, 99.9))
-    ],
-    attempt_type: attemptType
-  };
-}
+  jee_society_score: format(JSS),
+  expected_percentile: format(P_expected),
+  expected_percentile_range: [
+    format(clamp(Expected_Range[0], 0, 99.9)),
+    format(clamp(Expected_Range[1], 0, 99.9))
+  ],
+  potential_percentile: format(P_potential),
+  potential_percentile_range: [
+    format(clamp(Potential_Range[0], 0, 99.9)),
+    format(clamp(Potential_Range[1], 0, 99.9))
+  ],
+  attempt_type: attemptType,
+
+  // THIS is what connects the psychology engine
+  manifestKeys
+};
