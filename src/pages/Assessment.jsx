@@ -282,7 +282,7 @@ const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
 };
 
 // -------------------------------------------------------------
-//  NEW CHECKOUT PAGE COMPONENT
+//  NEW CHECKOUT PAGE COMPONENT (MOBILE OPTIMIZED)
 // -------------------------------------------------------------
 const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
   const [formData, setFormData] = useState({
@@ -294,18 +294,15 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
   const [discountApplied, setDiscountApplied] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Logic: 199 Base, 99 Discounted
   const BASE_PRICE = 199;
   const DISCOUNT_PRICE = 99;
   const currentPrice = discountApplied ? DISCOUNT_PRICE : BASE_PRICE;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Auto-Capitalize Coupon
     if (name === "coupon") {
         const code = value.toUpperCase();
         setFormData({ ...formData, coupon: code });
-        // Auto-Check Coupon Logic
         if (code === "EARLYBIRD") setDiscountApplied(true);
         else setDiscountApplied(false);
     } else {
@@ -314,19 +311,14 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
   };
 
   const handlePayment = async () => {
-    // ✅ 1. Empty Check
     if (!formData.name || !formData.email || !formData.phone) {
         alert("Please fill all details to proceed.");
         return;
     }
-
-    // ✅ 2. Email Validation (@ check)
     if (!formData.email.includes("@")) {
         alert("Please enter a valid Email Address.");
         return;
     }
-
-    // ✅ 3. Phone Validation (Exact 10 digits)
     if (formData.phone.length !== 10 || isNaN(formData.phone)) {
         alert("Please enter a valid 10-digit Mobile Number.");
         return;
@@ -335,7 +327,6 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
     setLoading(true);
 
     try {
-        // 1. Create Order
         const backendUrl = "https://backend-final-510329279046.asia-south1.run.app";
         const response = await fetch(`${backendUrl}/create-order`, {
             method: "POST",
@@ -350,16 +341,15 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
             return;
         }
 
-        // 2. Open Razorpay
         const options = {
-            key: "rzp_test_S6RnINvdYeZppP", // Test Key
+            key: "rzp_test_S6RnINvdYeZppP",
             amount: data.order.amount,
             currency: "INR",
             name: "JEE Society",
             description: "Detailed Analysis Report",
+            image: "/JEEsociety_logo.png",
             order_id: data.order.id,
             handler: async function (response) {
-                // 3. Verify & Send
                 const verifyReq = await fetch(`${backendUrl}/verify-payment`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -368,7 +358,7 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_signature: response.razorpay_signature,
                         userData: {
-                            ...formData, // Name, Email, Phone
+                            ...formData,
                             answers: userData.answers,
                             score: userData.score
                         }
@@ -404,27 +394,22 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8f9fa", padding: "20px", display: "flex", justifyContent: "center" }}>
+    // ✅ FIXED: Better Padding & Flex for Mobile
+    <div style={{ minHeight: "100vh", background: "#f8f9fa", padding: "10px", display: "flex", justifyContent: "center" }}>
         <div style={{ width: "100%", maxWidth: "900px", background: "white", borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.08)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
             
             {/* --- HEADER --- */}
-<div style={{ padding: "20px 30px", borderBottom: "1px solid #eee", display: "flex", alignItems: "center", gap: "12px" }}>
-    {/* ✅ UPDATED: Use Real Logo */}
-    <img src="/JEEsociety_logo.png" alt="Logo" style={{ height: "40px", width: "40px", objectFit: "contain" }} />
-    <div style={{ 
-    fontSize: "24px", 
-    fontWeight: "800", 
-    color: "#333", 
-    fontFamily: "'Montserrat', sans-serif", // ✅ Applied Font here
-    letterSpacing: "-0.5px" 
-}}>
-    JEE<span style={{ color: "#c62828" }}>society</span>
-</div>
-</div>
+            <div style={{ padding: "20px 30px", borderBottom: "1px solid #eee", display: "flex", alignItems: "center", gap: "12px" }}>
+                <img src="/JEEsociety_logo.png" alt="Logo" style={{ height: "40px", width: "40px", objectFit: "contain" }} />
+                <div style={{ fontSize: "24px", fontWeight: "800", color: "#333", fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.5px" }}>
+                    JEE<span style={{ color: "#c62828" }}>society</span>
+                </div>
+            </div>
 
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {/* --- LEFT: FORM --- */}
-                <div style={{ flex: 1, padding: "40px", minWidth: "300px" }}>
+                {/* ✅ FIXED: Reduced Padding (25px) & MinWidth logic */}
+                <div style={{ flex: 1, padding: "25px", minWidth: "300px" }}>
                     <h2 style={{ marginTop: 0, marginBottom: "10px", fontSize: "24px" }}>Final Step</h2>
                     <p style={{ color: "#666", marginBottom: "30px" }}>Enter your details to receive the report.</p>
 
@@ -434,7 +419,7 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                             name="name" 
                             value={formData.name} 
                             onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828" }}
+                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
                             placeholder="Enter Name"
                         />
                     </div>
@@ -446,7 +431,7 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                             type="email"
                             value={formData.email} 
                             onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828" }}
+                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
                             placeholder="Enter Email"
                         />
                     </div>
@@ -458,7 +443,7 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                             type="tel"
                             value={formData.phone} 
                             onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828" }}
+                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
                             placeholder="Enter Phone Number"
                         />
                     </div>
@@ -469,7 +454,8 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                 </div>
 
                 {/* --- RIGHT: SUMMARY & PAY --- */}
-                <div style={{ flex: 1, background: "#fcfcfc", padding: "40px", borderLeft: "1px solid #eee", minWidth: "300px" }}>
+                {/* ✅ FIXED: Reduced Padding (25px) */}
+                <div style={{ flex: 1, background: "#fcfcfc", padding: "25px", borderLeft: "1px solid #eee", minWidth: "300px" }}>
                     <h3 style={{ marginTop: 0, fontSize: "18px", color: "#333" }}>Order Summary</h3>
                     
                     <div style={{ display: "flex", justifyContent: "space-between", margin: "20px 0", color: "#555" }}>
@@ -477,14 +463,13 @@ const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
                         <span>₹{BASE_PRICE}</span>
                     </div>
 
-                    {/* COUPON BOX */}
                     <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
                         <input 
                             name="coupon"
                             value={formData.coupon}
                             onChange={handleChange}
                             placeholder="Coupon Code"
-                            style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #ddd", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "bold" }}
+                            style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #ddd", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "bold", boxSizing: "border-box" }}
                         />
                     </div>
                     
@@ -535,11 +520,8 @@ export default function StudentSwotForm() {
   const [answers, setAnswers] = useState({});
   const [showSWOT, setShowSWOT] = useState(false);
   const [finalSWOT, setFinalSWOT] = useState({ S: "", W: "", O: "", T: "" });
-  
-  // -- NEW STATE FOR CHECKOUT --
   const [showCheckout, setShowCheckout] = useState(false);
 
-  // Progress 
   const TOTAL_QUESTIONS = 18;
   const currentQuestionIndex = Math.max(step - 1, 0); 
   const progressPercent = Math.min(Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100), 100);
@@ -572,8 +554,6 @@ export default function StudentSwotForm() {
 
   const submit = () => calculateSWOT();
 
-
-  // ---------------- RENDER: CHECKOUT PAGE ----------------
   if (showCheckout) {
     const scores = computeScores(answers);
     const userData = {
@@ -589,14 +569,11 @@ export default function StudentSwotForm() {
             onPaymentSuccess={(email) => {
                 alert(`✅ Payment Successful!\nReport sent to ${email}`);
                 setShowCheckout(false);
-                // Optional: Redirect to Home
-                // navigate("/"); 
             }}
         />
     );
   }
 
-  // ---------------- RENDER: RESULTS PAGE ----------------
   if (showSWOT) {
     const scores = computeScores(answers);
     const { jee_society_score, expected_percentile_range, potential_percentile_range } = scores;
@@ -605,11 +582,13 @@ export default function StudentSwotForm() {
       <div className="swot-container">
         <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
+          
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "50px", marginTop: "20px" }}>
             <div style={{ marginBottom: "20px" }}>
               <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
             </div>
-            <div style={{ display: "flex", gap: "60px", justifyContent: "center" }}>
+            {/* ✅ FIXED: flexWrap for Mobile */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", justifyContent: "center" }}>
               <CircularScore value={scores.expected_percentile} color="#1db954" title="EP" rangeText={`${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`} />
               <CircularScore value={scores.potential_percentile} color="#ff7a00" title="PP" rangeText={`${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`} />
             </div>
@@ -644,8 +623,7 @@ export default function StudentSwotForm() {
               <h3 style={{ margin: "0 0 5px 0", color: "#ff7a00", fontSize: "18px" }}>PP (Potential Percentile)</h3>
               <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
                 This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
-              </p>
-                         </div>
+              </p>             </div>
           </div>
         </div>
 
@@ -653,16 +631,13 @@ export default function StudentSwotForm() {
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
-          
-          {/* ✅ UPDATED BUTTON: NOW OPENS CHECKOUT PAGE */}
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px", flexWrap: "wrap" }}>
           <button
             onClick={() => setShowCheckout(true)}
             style={{
               padding: "12px 24px", borderRadius: "12px",
               background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
-              color: "white", fontSize: "16px", border: "none",
-              cursor: "pointer", transition: "0.2s ease",
+              color: "white", fontSize: "16px", border: "none", cursor: "pointer", transition: "0.2s ease",
               boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
             }}
             onMouseEnter={(e) => {
@@ -799,17 +774,14 @@ export default function StudentSwotForm() {
     );
   }
 
-  // ---------------- RENDER: QUESTION PAGE ----------------
   const q = QUESTIONS[step];
 
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa", padding: "20px 12px" }}>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
-        <div style={{
-          background: "#fff", padding: "28px", borderRadius: "18px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
-        }}>
-          {/* Header */}
+        <div style={{ background: "#fff", padding: "28px", borderRadius: "18px", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" }}>
+          
+          {/* HEADER */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -834,7 +806,6 @@ export default function StudentSwotForm() {
 
           <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "20px" }}>{q.question}</h2>
 
-          {/* INPUTS */}
           {q.type === "text" ? (
             <input
               type="text"
@@ -880,8 +851,12 @@ export default function StudentSwotForm() {
               })}
             </div>
           )}
+          
+          {/* ✅ ADDED: Disclaimer Text (Task 1) */}
+          <p style={{ fontSize: "12px", color: "#888", marginTop: "15px", textAlign: "center", fontStyle: "italic" }}>
+            If no option feels 100% correct, choose the closest one — the model is designed to adjust for that.
+          </p>
 
-          {/* BUTTONS */}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "35px", gap: "16px" }}>
             {step > 0 && (
               <button
