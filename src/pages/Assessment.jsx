@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../swot.css";
 import { computeScores } from "../utils/score";
@@ -233,7 +233,7 @@ const QUESTIONS = [
       "April Attempt 2026",
       "JEE 2027"
     ],
-    weights: [0, 0]
+    weights: [0, 0] 
   },
   // Q18 UPDATED
   {
@@ -245,15 +245,15 @@ const QUESTIONS = [
       "I am stuck between 50 - 100 (or I struggle to solve even 20 questions correctly).",
       "I generally can’t score more than 50 marks in JEE Mains Mock Tests."
     ],
-    weights: [0, 0, 0, 0]
+    weights: [0, 0, 0, 0] 
   }
 ];
 
-// --- HELPER COMPONENT: CIRCULAR SCORE ---
+// --- HELPER COMPONENT: ---
 const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
-  const radius = 70;
-  const strokeWidth = 12;
-  const size = 180;
+  const radius = 70; // Increased size (was 50)
+  const strokeWidth = 12; // Thicker border
+  const size = 180; // SVG ViewBox size
   const center = size / 2;
   
   const circumference = 2 * Math.PI * radius;
@@ -263,7 +263,13 @@ const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
       <div style={{ width: "180px", height: "180px", position: "relative" }}>
         <svg width="180" height="180" viewBox={`0 0 ${size} ${size}`}>
-          <circle cx={center} cy={center} r={radius} stroke="#eee" strokeWidth={strokeWidth} fill="none" />
+          {/* Background Circle */}
+          <circle 
+            cx={center} cy={center} r={radius} 
+            stroke="#eee" strokeWidth={strokeWidth} fill="none" 
+          />
+          
+          {/* Progress Circle */}
           <circle
             cx={center} cy={center} r={radius} 
             stroke={color} strokeWidth={strokeWidth} fill="none"
@@ -273,258 +279,49 @@ const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
             transform={`rotate(-90 ${center} ${center})`}
             style={{ transition: "stroke-dashoffset 1s ease-out" }}
           />
-          <text x={center} y={center - 15} textAnchor="middle" fontSize="28" fontWeight="900" fill={color} style={{ filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.1))" }}>{title}</text>
-          <text x={center} y={center + 20} textAnchor="middle" fontSize="18" fontWeight="700" fill="#444">{rangeText}</text>
+          
+          {/* Title (JSS/EP/PP) */}
+          <text 
+            x={center} y={center - 15} 
+            textAnchor="middle" 
+            fontSize="28" fontWeight="900" fill={color}
+            style={{ filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.1))" }}
+          >
+            {title}
+          </text>
+          
+          {/* Range Text (The Numbers) - MUCH BIGGER NOW */}
+          <text 
+            x={center} y={center + 20} 
+            textAnchor="middle" 
+            fontSize="18" fontWeight="700" fill="#444"
+          >
+            {rangeText}
+          </text>
         </svg>
       </div>
     </div>
   );
 };
-
-// -------------------------------------------------------------
-//  NEW CHECKOUT PAGE COMPONENT (MOBILE OPTIMIZED)
-// -------------------------------------------------------------
-const CheckoutPage = ({ userData, onBack, onPaymentSuccess }) => {
-  const [formData, setFormData] = useState({
-    name: userData.name || "",
-    email: "",
-    phone: "",
-    coupon: ""
-  });
-  const [discountApplied, setDiscountApplied] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const BASE_PRICE = 199;
-  const DISCOUNT_PRICE = 99;
-  const currentPrice = discountApplied ? DISCOUNT_PRICE : BASE_PRICE;
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "coupon") {
-        const code = value.toUpperCase();
-        setFormData({ ...formData, coupon: code });
-        if (code === "EARLYBIRD") setDiscountApplied(true);
-        else setDiscountApplied(false);
-    } else {
-        setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handlePayment = async () => {
-    if (!formData.name || !formData.email || !formData.phone) {
-        alert("Please fill all details to proceed.");
-        return;
-    }
-    if (!formData.email.includes("@")) {
-        alert("Please enter a valid Email Address.");
-        return;
-    }
-    if (formData.phone.length !== 10 || isNaN(formData.phone)) {
-        alert("Please enter a valid 10-digit Mobile Number.");
-        return;
-    }
-
-    setLoading(true);
-
-    try {
-        const backendUrl = "https://backend-final-510329279046.asia-south1.run.app";
-        const response = await fetch(`${backendUrl}/create-order`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ coupon: formData.coupon })
-        });
-        const data = await response.json();
-
-        if (!data.success) {
-            alert("Order Creation Failed: " + data.error);
-            setLoading(false);
-            return;
-        }
-
-        const options = {
-            key: "rzp_test_S6RnINvdYeZppP",
-            amount: data.order.amount,
-            currency: "INR",
-            name: "JEE Society",
-            description: "Detailed Analysis Report",
-            image: "/JEEsociety_logo.png",
-            order_id: data.order.id,
-            handler: async function (response) {
-                const verifyReq = await fetch(`${backendUrl}/verify-payment`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature,
-                        userData: {
-                            ...formData,
-                            answers: userData.answers,
-                            score: userData.score
-                        }
-                    })
-                });
-                const verifyData = await verifyReq.json();
-                if (verifyData.success) {
-                    onPaymentSuccess(formData.email);
-                } else {
-                    alert("Payment Verified Failed.");
-                }
-            },
-            prefill: {
-                name: formData.name,
-                email: formData.email,
-                contact: formData.phone
-            },
-            theme: { color: "#c62828" }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-        rzp.on('payment.failed', function (response){
-            alert("Payment Failed: " + response.error.description);
-            setLoading(false);
-        });
-
-    } catch (e) {
-        console.error(e);
-        alert("Connection Error. Please try again.");
-        setLoading(false);
-    }
-  };
-
-  return (
-    // ✅ FIXED: Better Padding & Flex for Mobile
-    <div style={{ minHeight: "100vh", background: "#f8f9fa", padding: "10px", display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "100%", maxWidth: "900px", background: "white", borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.08)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-            
-            {/* --- HEADER --- */}
-            <div style={{ padding: "20px 30px", borderBottom: "1px solid #eee", display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/JEEsociety_logo.png" alt="Logo" style={{ height: "40px", width: "40px", objectFit: "contain" }} />
-                <div style={{ fontSize: "24px", fontWeight: "800", color: "#333", fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.5px" }}>
-                    JEE<span style={{ color: "#c62828" }}>society</span>
-                </div>
-            </div>
-
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {/* --- LEFT: FORM --- */}
-                {/* ✅ FIXED: Reduced Padding (25px) & MinWidth logic */}
-                <div style={{ flex: 1, padding: "25px", minWidth: "300px" }}>
-                    <h2 style={{ marginTop: 0, marginBottom: "10px", fontSize: "24px" }}>Final Step</h2>
-                    <p style={{ color: "#666", marginBottom: "30px" }}>Enter your details to receive the report.</p>
-
-                    <div style={{ marginBottom: "20px" }}>
-                        <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "#444" }}>Full Name</label>
-                        <input 
-                            name="name" 
-                            value={formData.name} 
-                            onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
-                            placeholder="Enter Name"
-                        />
-                    </div>
-
-                    <div style={{ marginBottom: "20px" }}>
-                        <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "#444" }}>Email Address</label>
-                        <input 
-                            name="email" 
-                            type="email"
-                            value={formData.email} 
-                            onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
-                            placeholder="Enter Email"
-                        />
-                    </div>
-
-                    <div style={{ marginBottom: "20px" }}>
-                        <label style={{ display: "block", fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "#444" }}>Phone Number</label>
-                        <input 
-                            name="phone" 
-                            type="tel"
-                            value={formData.phone} 
-                            onChange={handleChange}
-                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px", outlineColor: "#c62828", boxSizing: "border-box" }}
-                            placeholder="Enter Phone Number"
-                        />
-                    </div>
-                    
-                    <button onClick={onBack} style={{ background: "transparent", border: "none", color: "#777", cursor: "pointer", marginTop: "10px", fontSize: "14px" }}>
-                        ← Go Back
-                    </button>
-                </div>
-
-                {/* --- RIGHT: SUMMARY & PAY --- */}
-                {/* ✅ FIXED: Reduced Padding (25px) */}
-                <div style={{ flex: 1, background: "#fcfcfc", padding: "25px", borderLeft: "1px solid #eee", minWidth: "300px" }}>
-                    <h3 style={{ marginTop: 0, fontSize: "18px", color: "#333" }}>Order Summary</h3>
-                    
-                    <div style={{ display: "flex", justifyContent: "space-between", margin: "20px 0", color: "#555" }}>
-                        <span>JEE Detailed Analysis Report</span>
-                        <span>₹{BASE_PRICE}</span>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                        <input 
-                            name="coupon"
-                            value={formData.coupon}
-                            onChange={handleChange}
-                            placeholder="Coupon Code"
-                            style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #ddd", textTransform: "uppercase", letterSpacing: "1px", fontWeight: "bold", boxSizing: "border-box" }}
-                        />
-                    </div>
-                    
-                    {discountApplied && (
-                         <div style={{ padding: "10px", background: "#e8f5e9", color: "#2e7d32", borderRadius: "6px", fontSize: "13px", marginBottom: "20px" }}>
-                            ✅ Coupon "EARLYBIRD" Applied! (₹100 Off)
-                        </div>
-                    )}
-
-                    <div style={{ borderTop: "1px solid #ddd", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
-                        <span style={{ fontWeight: "700", fontSize: "18px" }}>Total</span>
-                        <div style={{ textAlign: "right" }}>
-                            {discountApplied && <span style={{ textDecoration: "line-through", color: "#999", marginRight: "10px", fontSize: "14px" }}>₹{BASE_PRICE}</span>}
-                            <span style={{ fontSize: "28px", fontWeight: "800", color: "#c62828" }}>₹{currentPrice}</span>
-                        </div>
-                    </div>
-
-                    <button 
-                        onClick={handlePayment}
-                        disabled={loading}
-                        style={{ 
-                            width: "100%", padding: "16px", borderRadius: "10px", border: "none",
-                            background: loading ? "#ccc" : "#c62828", color: "white", fontSize: "18px", fontWeight: "bold",
-                            cursor: loading ? "not-allowed" : "pointer", boxShadow: "0 4px 15px rgba(198, 40, 40, 0.3)"
-                        }}
-                    >
-                        {loading ? "Processing..." : `Pay ₹${currentPrice}`}
-                    </button>
-
-                    <div style={{ textAlign: "center", marginTop: "15px", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", color: "#777", fontSize: "12px" }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Secured by Razorpay
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  );
-};
-
-
-// -------------------------------------------------------------
-//  MAIN COMPONENT (ASSESSMENT)
-// -------------------------------------------------------------
 export default function StudentSwotForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showSWOT, setShowSWOT] = useState(false);
   const [finalSWOT, setFinalSWOT] = useState({ S: "", W: "", O: "", T: "" });
-  const [showCheckout, setShowCheckout] = useState(false);
+  
+  // -- MODAL STATES --
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
+  // Progress (exclude name question)
   const TOTAL_QUESTIONS = 18;
   const currentQuestionIndex = Math.max(step - 1, 0); 
-  const progressPercent = Math.min(Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100), 100);
+  const progressPercent = Math.min(
+    Math.round((currentQuestionIndex / TOTAL_QUESTIONS) * 100),
+    100
+  );
 
   const handleChange = (value) => {
     setAnswers({ ...answers, [QUESTIONS[step].id]: value });
@@ -534,19 +331,35 @@ export default function StudentSwotForm() {
     if (step < QUESTIONS.length - 1) setStep(step + 1);
   };
 
+  // ✅ NEW CODE
   const calculateSWOT = () => {
+    // 1. Get the Index (0-3) of the Primary Question for each Category
+    // Strength (S) -> Q1 (Consistency)
+    // Weakness (W) -> Q3 (Syllabus)
+    // Opportunity (O) -> Q13 (Energy)
+    // Threat (T) -> Q15 (Environment)
+
     const sIndex = Number(answers["q1"] || 0);
     const wIndex = Number(answers["q3"] || 0);
     const oIndex = Number(answers["q13"] || 0);
     const tIndex = Number(answers["q15"] || 0);
+
+    // 2. Select a Random Line from that Specific Bucket
+    // We use a simple randomizer to pick one of the 5 lines in that bucket
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-    const getResponse = (lib, idx) => (lib && lib[idx] ? lib[idx] : (lib ? lib[0] : ["Data missing"]));
+
+    // 3. Fallback logic (in case of missing data)
+    const getResponse = (lib, idx) => {
+      // Check if lib[idx] exists, otherwise fall back to bucket 0
+      const bucket = lib && lib[idx] ? lib[idx] : (lib ? lib[0] : ["Data missing"]);
+      return pick(bucket);
+    };
 
     setFinalSWOT({
-      S: pick(getResponse(StrengthResponses, sIndex)),
-      W: pick(getResponse(WeaknessResponses, wIndex)),
-      O: pick(getResponse(OpportunityResponses, oIndex)),
-      T: pick(getResponse(ThreatResponses, tIndex)),
+      S: getResponse(StrengthResponses, sIndex),
+      W: getResponse(WeaknessResponses, wIndex),
+      O: getResponse(OpportunityResponses, oIndex),
+      T: getResponse(ThreatResponses, tIndex),
     });
 
     setShowSWOT(true);
@@ -554,57 +367,131 @@ export default function StudentSwotForm() {
 
   const submit = () => calculateSWOT();
 
-  if (showCheckout) {
-    const scores = computeScores(answers);
-    const userData = {
-        name: answers["name"],
-        answers: answers,
-        score: scores.jee_society_score
+  // --------------------------------------------------------
+  // HANDLE REPORT SENDING
+  // --------------------------------------------------------
+  const handleSendReport = async () => {
+    if (!email || !email.includes("@")) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSending(true);
+
+    // Calculate score using the new logic for the backend payload
+    const result = computeScores(answers);
+
+    // Prepare payload
+    const payload = {
+      email: email,
+      name: answers["name"] || "Future IITian",
+      answers: answers,
+      score: result.jee_society_score, // Using new score
+      // You can also pass the projected ranges if your backend supports them
+      swot: {
+        strengths: finalSWOT.S,
+        weaknesses: finalSWOT.W,
+        opportunities: finalSWOT.O,
+        threats: finalSWOT.T
+      },
+      recommendations: "Focus on your flagged weaknesses. Use the Opportunity areas to gain extra marks."
     };
 
-    return (
-        <CheckoutPage 
-            userData={userData} 
-            onBack={() => setShowCheckout(false)} 
-            onPaymentSuccess={(email) => {
-                alert(`✅ Payment Successful!\nReport sent to ${email}`);
-                setShowCheckout(false);
-            }}
-        />
-    );
-  }
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/send-dynamic-report`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+      });
 
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Report sent successfully to " + email);
+        setShowEmailModal(false);
+      } else {
+        alert("Failed to send report: " + data.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error connecting to server.");
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+
+  // -------------------- SWOT PAGE + PERCENTILES --------------------
   if (showSWOT) {
+    // USE THE NEW SCORING ENGINE
     const scores = computeScores(answers);
-    const { jee_society_score, expected_percentile_range, potential_percentile_range } = scores;
+    const { 
+      jee_society_score, 
+      expected_percentile_range, 
+      potential_percentile_range 
+    } = scores;
+
+    // Helper for ranges "92.5 - 94.2"
+    const expRangeStr = `${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`;
+    const potRangeStr = `${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`;
 
     return (
       <div className="swot-container">
         <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
+
         <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
-          
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "50px", marginTop: "20px" }}>
+          {/* --- TRIAD (PYRAMID) LAYOUT --- */}
+          <div style={{ 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center", 
+            marginBottom: "50px",
+            marginTop: "20px"
+          }}>
+            
+            {/* TOP: JSS (Center) */}
             <div style={{ marginBottom: "20px" }}>
-              <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
+              <CircularScore
+                value={jee_society_score}
+                color="#6a11cb"
+                title="JSS"
+                rangeText={jee_society_score}
+              />
             </div>
-            {/* ✅ FIXED: flexWrap for Mobile */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", justifyContent: "center" }}>
-              <CircularScore value={scores.expected_percentile} color="#1db954" title="EP" rangeText={`${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`} />
-              <CircularScore value={scores.potential_percentile} color="#ff7a00" title="PP" rangeText={`${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`} />
+
+            {/* BOTTOM: EP & PP (Side by Side) */}
+            <div style={{ display: "flex", gap: "60px", justifyContent: "center" }}>
+              <CircularScore
+                value={scores.expected_percentile}
+                color="#1db954"
+                title="EP"
+                rangeText={expRangeStr}
+              />
+              <CircularScore
+                value={scores.potential_percentile}
+                color="#ff7a00"
+                title="PP"
+                rangeText={potRangeStr}
+              />
             </div>
           </div>
-          
+
+          {/* --- DETAILED DEFINITIONS (Making Page Long) --- */}
           <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "40px" }}>
-             <div style={{ 
+            
+            {/* JSS Card */}
+            <div style={{ 
               background: "#f8f9fa", padding: "20px", borderRadius: "12px", 
               borderLeft: "5px solid #6a11cb", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
             }}>
-              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEE Society Score)</h3>
+              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEEsociety Score)</h3>
               <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
-                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means your "System" is broken, even if your "Knowledge" is good.
+                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means that you lack a good "system", even if your "Knowledge" is good.
               </p>
-              </div>
-              {/* EP Card */}
+            </div>
+
+            {/* EP Card */}
             <div style={{ 
               background: "#f0fff4", padding: "20px", borderRadius: "12px", 
               borderLeft: "5px solid #1db954", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
@@ -623,21 +510,26 @@ export default function StudentSwotForm() {
               <h3 style={{ margin: "0 0 5px 0", color: "#ff7a00", fontSize: "18px" }}>PP (Potential Percentile)</h3>
               <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
                 This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
-              </p>             </div>
+              </p>
+            </div>
           </div>
         </div>
 
+        {/* SWOT Boxes */}
         <h2>Your Strength & Weakness</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px", flexWrap: "wrap" }}>
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
+          
           <button
-            onClick={() => setShowCheckout(true)}
+            onClick={() => setShowEmailModal(true)}
             style={{
               padding: "12px 24px", borderRadius: "12px",
               background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
-              color: "white", fontSize: "16px", border: "none", cursor: "pointer", transition: "0.2s ease",
+              color: "white", fontSize: "16px", border: "none",
+              cursor: "pointer", transition: "0.2s ease",
               boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
             }}
             onMouseEnter={(e) => {
@@ -672,7 +564,8 @@ export default function StudentSwotForm() {
             View Sample Report
           </button>
         </div>
-        {/* --- YOUTUBE BUTTON (Placed Below Report Buttons) --- */}
+
+{/* --- YOUTUBE BUTTON --- */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <a 
             href="https://www.youtube.com/@SreyashBhaiyaIITB" 
@@ -713,7 +606,7 @@ export default function StudentSwotForm() {
             </button>
           </a>
         </div>
-
+        
         {/* Report Content Details */}
         <details style={{ 
           marginTop: "30px", 
@@ -745,7 +638,67 @@ export default function StudentSwotForm() {
               <li><strong>Personalized Strategy:</strong> A tailored roadmap and recommendations to improve your score.</li>
             </ul>
         </details>
-      <div style={{ marginTop: "40px", textAlign: "center", paddingBottom: "20px" }}>
+
+        {/* ---------------- EMAIL MODAL ---------------- */}
+        {showEmailModal && (
+          <div style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(5px)",
+            display: "flex", justifyContent: "center", alignItems: "center",
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: "white", padding: "30px", borderRadius: "16px",
+              width: "90%", maxWidth: "400px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
+              textAlign: "center", animation: "slideUp 0.4s ease"
+            }}>
+              <h3 style={{ fontSize: "22px", marginBottom: "15px", color: "#333" }}>
+                Receive Your Full Report
+              </h3>
+              <p style={{ color: "#666", marginBottom: "20px", fontSize: "15px" }}>
+                Enter your email address to get the detailed PDF report sent directly to your inbox.
+              </p>
+              
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  width: "100%", padding: "12px", borderRadius: "8px",
+                  border: "1px solid #ddd", fontSize: "16px", marginBottom: "20px",
+                  boxSizing: "border-box", outlineColor: "#4b6bff"
+                }}
+              />
+
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button 
+                  onClick={() => setShowEmailModal(false)}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: "8px", border: "none",
+                    background: "#f0f0f0", color: "#555", fontWeight: "600",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleSendReport}
+                  disabled={isSending}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: "8px", border: "none",
+                    background: isSending ? "#ccc" : "linear-gradient(90deg, #4b6bff, #7b2fff)",
+                    color: "white", fontWeight: "600", cursor: isSending ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {isSending ? "Sending..." : "Send Report"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ marginTop: "40px", textAlign: "center", paddingBottom: "20px" }}>
           <button
             onClick={() => navigate("/")} 
             style={{
@@ -774,14 +727,17 @@ export default function StudentSwotForm() {
     );
   }
 
+  // -------------------- QUESTION PAGE --------------------
   const q = QUESTIONS[step];
 
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa", padding: "20px 12px" }}>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
-        <div style={{ background: "#fff", padding: "28px", borderRadius: "18px", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" }}>
-          
-          {/* HEADER */}
+        <div style={{
+          background: "#fff", padding: "28px", borderRadius: "18px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
+        }}>
+          {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -806,6 +762,7 @@ export default function StudentSwotForm() {
 
           <h2 style={{ fontSize: "20px", fontWeight: "600", marginBottom: "20px" }}>{q.question}</h2>
 
+          {/* INPUTS */}
           {q.type === "text" ? (
             <input
               type="text"
@@ -851,12 +808,11 @@ export default function StudentSwotForm() {
               })}
             </div>
           )}
-          
+
           {/* ✅ ADDED: Disclaimer Text (Task 1) */}
           <p style={{ fontSize: "12px", color: "#888", marginTop: "15px", textAlign: "center", fontStyle: "italic" }}>
             If no option feels 100% correct, choose the closest one — the model is designed to adjust for that.
           </p>
-
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "35px", gap: "16px" }}>
             {step > 0 && (
               <button
