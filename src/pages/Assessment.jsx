@@ -398,7 +398,7 @@ export default function StudentSwotForm() {
     };
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const backendUrl = "https://backend-final-510329279046.asia-south1.run.app";
       const response = await fetch(`${backendUrl}/send-dynamic-report`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
