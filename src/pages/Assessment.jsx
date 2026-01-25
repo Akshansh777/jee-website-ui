@@ -26,8 +26,8 @@ const QUESTIONS = [
     options: [
       "The Machine: I study every single day without fail, hitting all my targets.",
       "The Weekend Warrior: I have 3-4 good days, but I waste 2-3 days feeling unmotivated.",
-      "The Burst Worker: I study 14 hours one day, then burnout and do nothing for 2 days.",
-      "The Procrastinator: I plan every night, but barely execute 20% of it the next day."
+      "The Burst Worker: I study 7+ hours one day, then burnout and do nothing for 2 days.",
+      "The Procrastinator: I plan every night, but barely execute 50% of it the next day."
     ],
     weights: [10, 6, 4, 0]
   },
@@ -40,8 +40,8 @@ const QUESTIONS = [
     options: [
       "Deep Focus: 6+ hours of pure, phone-free study (excluding lectures).",
       "Standard Grind: 4-6 hours of self-study, but I take frequent breaks.",
-      "Passive Consumption: I spend most of my time watching lectures/One-shots; barely 2 hours of solving.",
-      "Distracted: I sit for 10 hours, but effective study is hardly 2 hours due to phone/daydreaming."
+      "Passive Consumption: I spend most of my time watching lectures/One-shots; I barely give time to solving.",
+      "Distracted: I sit for 6+ hours, but effective study is hardly 1 hour due to phone/daydreaming."
     ],
     weights: [10, 7, 3, 0]
   },
@@ -91,7 +91,7 @@ const QUESTIONS = [
     question: "Q6. How is your Mathematics(Honestly)?",
     options: [
       "Killer: I love Math; I love solving complex problems in a given time. ",
-      "Survivor: I only target specific high-weightage chapters (Vector/3D) to clear cutoff. ",
+      "Survivor: I only target specific high-weightage chapters (Vector/3D) to score decent. ",
       "Phobia: I am terrified of Math; I haven't solved a question in weeks. ",
       "The Ego Lifter: I am weak, but I waste hours trying to solve impossible problems just to prove I can. "
     ],
@@ -105,7 +105,7 @@ const QUESTIONS = [
       "Crystal Clear: I recall every formula while solving questions. ",
       "Blurry: I recognize the concept when I see the solution, but can't recall it during the question. ",
       "Leaky Bucket: I study a chapter, but 1 week later it feels like I never studied it. ",
-      "Blank Out: I panic in tests and forget even the basics I knew well. "
+      "Blank Out: I panic in tests and forget even the basics I knew well because of the panic. "
     ],
     weights: [10, 7, 4, 0]
   },
@@ -116,7 +116,7 @@ const QUESTIONS = [
     options: [
       "I solve 20+ MCQs per hour with high accuracy.",
       "I solve 10-15 MCQs per hour.",
-      "I take 10 minutes per question (mostly staring at it).",
+      " I take 5-10 minutes per question (mostly staring at it).",
       "I don’t like solving questions at all."
     ],
     weights: [10, 7, 3, 0]
@@ -136,7 +136,7 @@ const QUESTIONS = [
   // Q10 (Standard)
   {
     id: "q10",
-    question: "Q10. The \"Error Pattern\" (Why do you generally lose marks?)",
+    question: "Q10. The \"Error Pattern\" (Why do you GENERALLY lose marks?)",
     options: [
       "Conceptual: I honestly didn't know the theory/logic. ",
       "Silly/Calculation: I knew it, but made a silly mistake or read the question wrong. ",
@@ -204,8 +204,8 @@ const QUESTIONS = [
     impact: "primary",
     question: "Q15. How is your Study Environment",
     options: [
-      "The Bunker: Private room, silence, zero distractions. ",
-      "The Library: I go out to study, which helps, but travel wastes time. ",
+      "The Peace: Private room, silence, fewer distractions. ",
+      "The Library: I go out to study, which helps, but travel wastes time a bit. ",
       "The Living Room: I study in a noisy area; people keep disturbing me. ",
       "The Chaos: Toxic environment/arguments at home make it hard to concentrate. "
     ],
