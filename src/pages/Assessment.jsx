@@ -26,8 +26,8 @@ const QUESTIONS = [
     options: [
       "The Machine: I study every single day without fail, hitting all my targets.",
       "The Weekend Warrior: I have 3-4 good days, but I waste 2-3 days feeling unmotivated.",
-      "The Burst Worker: I study 7+ hours one day, then burnout and do nothing for 2 days.",
-      "The Procrastinator: I plan every night, but barely execute 50% of it the next day."
+      "The Burst Worker: I study 14 hours one day, then burnout and do nothing for 2 days.",
+      "The Procrastinator: I plan every night, but barely execute 20% of it the next day."
     ],
     weights: [10, 6, 4, 0]
   },
@@ -40,8 +40,8 @@ const QUESTIONS = [
     options: [
       "Deep Focus: 6+ hours of pure, phone-free study (excluding lectures).",
       "Standard Grind: 4-6 hours of self-study, but I take frequent breaks.",
-      "Passive Consumption: I spend most of my time watching lectures/One-shots; I barely give time to solving.",
-      "Distracted: I sit for 6+ hours, but effective study is hardly 1 hour due to phone/daydreaming."
+      "Passive Consumption: I spend most of my time watching lectures/One-shots; barely 2 hours of solving.",
+      "Distracted: I sit for 10 hours, but effective study is hardly 2 hours due to phone/daydreaming."
     ],
     weights: [10, 7, 3, 0]
   },
@@ -91,7 +91,7 @@ const QUESTIONS = [
     question: "Q6. How is your Mathematics(Honestly)?",
     options: [
       "Killer: I love Math; I love solving complex problems in a given time. ",
-      "Survivor: I only target specific high-weightage chapters (Vector/3D) to score decent. ",
+      "Survivor: I only target specific high-weightage chapters (Vector/3D) to clear cutoff. ",
       "Phobia: I am terrified of Math; I haven't solved a question in weeks. ",
       "The Ego Lifter: I am weak, but I waste hours trying to solve impossible problems just to prove I can. "
     ],
@@ -105,7 +105,7 @@ const QUESTIONS = [
       "Crystal Clear: I recall every formula while solving questions. ",
       "Blurry: I recognize the concept when I see the solution, but can't recall it during the question. ",
       "Leaky Bucket: I study a chapter, but 1 week later it feels like I never studied it. ",
-      "Blank Out: I panic in tests and forget even the basics I knew well because of the panic. "
+      "Blank Out: I panic in tests and forget even the basics I knew well. "
     ],
     weights: [10, 7, 4, 0]
   },
@@ -116,7 +116,7 @@ const QUESTIONS = [
     options: [
       "I solve 20+ MCQs per hour with high accuracy.",
       "I solve 10-15 MCQs per hour.",
-      " I take 5-10 minutes per question (mostly staring at it).",
+      "I take 10 minutes per question (mostly staring at it).",
       "I don’t like solving questions at all."
     ],
     weights: [10, 7, 3, 0]
@@ -136,7 +136,7 @@ const QUESTIONS = [
   // Q10 (Standard)
   {
     id: "q10",
-    question: "Q10. The \"Error Pattern\" (Why do you GENERALLY lose marks?)",
+    question: "Q10. The \"Error Pattern\" (Why do you generally lose marks?)",
     options: [
       "Conceptual: I honestly didn't know the theory/logic. ",
       "Silly/Calculation: I knew it, but made a silly mistake or read the question wrong. ",
@@ -204,8 +204,8 @@ const QUESTIONS = [
     impact: "primary",
     question: "Q15. How is your Study Environment",
     options: [
-      "The Peace: Private room, silence, fewer distractions. ",
-      "The Library: I go out to study, which helps, but travel wastes time a bit. ",
+      "The Bunker: Private room, silence, zero distractions. ",
+      "The Library: I go out to study, which helps, but travel wastes time. ",
       "The Living Room: I study in a noisy area; people keep disturbing me. ",
       "The Chaos: Toxic environment/arguments at home make it hard to concentrate. "
     ],
@@ -398,7 +398,7 @@ export default function StudentSwotForm() {
     };
 
     try {
-      const backendUrl = "https://backend-final-510329279046.asia-south1.run.app";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await fetch(`${backendUrl}/send-dynamic-report`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -422,107 +422,99 @@ export default function StudentSwotForm() {
   };
 
 
-  // -------------------- SWOT PAGE + PERCENTILES --------------------
+  // ---------------- RENDER: RESULTS PAGE (Fixed Layout) ----------------
   if (showSWOT) {
-    // USE THE NEW SCORING ENGINE
     const scores = computeScores(answers);
-    const { 
-      jee_society_score, 
-      expected_percentile_range, 
-      potential_percentile_range 
-    } = scores;
+    const { jee_society_score, expected_percentile_range, potential_percentile_range } = scores;
 
-    // Helper for ranges "92.5 - 94.2"
-    const expRangeStr = `${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`;
-    const potRangeStr = `${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`;
+    // Helper Style for the "Row" layout
+    const rowStyle = {
+      display: "flex",
+      flexWrap: "wrap", // ✅ This makes it Stack on Mobile, Row on PC
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "30px",
+      marginBottom: "40px",
+      textAlign: "left"
+    };
+
+    // Helper Style for the Text Box
+    const boxStyle = (color, bg) => ({
+      flex: "1 1 300px", // Grow to fill space, but wrap if screen is small
+      minWidth: "280px", // Prevent it from getting too thin
+      background: bg,
+      padding: "20px",
+      borderRadius: "12px",
+      borderLeft: `6px solid ${color}`,
+      boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+    });
 
     return (
       <div className="swot-container">
-        <h2 style={{ marginBottom: "25px" }}>Your Performance Summary</h2>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "35px" }}>
-          {/* --- TRIAD (PYRAMID) LAYOUT --- */}
-          <div style={{ 
-            display: "flex", 
-            flexDirection: "column", 
-            alignItems: "center", 
-            marginBottom: "50px",
-            marginTop: "20px"
-          }}>
-            
-            {/* TOP: JSS (Center) */}
-            <div style={{ marginBottom: "20px" }}>
-              <CircularScore
-                value={jee_society_score}
-                color="#6a11cb"
-                title="JSS"
-                rangeText={jee_society_score}
-              />
-            </div>
-
-            {/* BOTTOM: EP & PP (Side by Side) */}
-            <div style={{ display: "flex", gap: "60px", justifyContent: "center" }}>
-              <CircularScore
-                value={scores.expected_percentile}
-                color="#1db954"
-                title="EP"
-                rangeText={expRangeStr}
-              />
-              <CircularScore
-                value={scores.potential_percentile}
-                color="#ff7a00"
-                title="PP"
-                rangeText={potRangeStr}
-              />
-            </div>
-          </div>
-
-          {/* --- DETAILED DEFINITIONS (Making Page Long) --- */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "40px" }}>
-            
-            {/* JSS Card */}
-            <div style={{ 
-              background: "#f8f9fa", padding: "20px", borderRadius: "12px", 
-              borderLeft: "5px solid #6a11cb", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-            }}>
-              <h3 style={{ margin: "0 0 5px 0", color: "#6a11cb", fontSize: "18px" }}>JSS (JEEsociety Score)</h3>
-              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
-                This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means that you lack a good "system", even if your "Knowledge" is good.
-              </p>
-            </div>
-
-            {/* EP Card */}
-            <div style={{ 
-              background: "#f0fff4", padding: "20px", borderRadius: "12px", 
-              borderLeft: "5px solid #1db954", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-            }}>
-              <h3 style={{ margin: "0 0 5px 0", color: "#1db954", fontSize: "18px" }}>EP (Expected Percentile)</h3>
-              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
-                If you continue <b>exactly</b> as you are today—without changing your habits—this is where you will land. This is the "Truth Mirror". It factors in your current leaks (distractions, weak revision) to predict your realistic outcome.
-              </p>
-            </div>
-
-            {/* PP Card */}
-            <div style={{ 
-              background: "#fff8e6", padding: "20px", borderRadius: "12px", 
-              borderLeft: "5px solid #ff7a00", boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-            }}>
-              <h3 style={{ margin: "0 0 5px 0", color: "#ff7a00", fontSize: "18px" }}>PP (Potential Percentile)</h3>
-              <p style={{ margin: 0, fontSize: "14px", color: "#555", lineHeight: "1.6" }}>
-                This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
-              </p>
-            </div>
-          </div>
+        <h2 style={{ marginBottom: "40px", fontSize: "28px" }}>Your Performance Summary</h2>
+        
+        {/* --- ROW 1: JSS --- */}
+        <div style={rowStyle}>
+           {/* Circle on Left (Top on Mobile) */}
+           <div style={{ flex: "0 0 auto" }}>
+              <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
+           </div>
+           
+           {/* Text on Right (Bottom on Mobile) */}
+           <div style={boxStyle("#6a11cb", "#f8f9fa")}>
+             <h3 style={{ margin: "0 0 8px 0", color: "#6a11cb", fontSize: "20px" }}>JSS (JEEsociety Score)</h3>
+             <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
+               This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means that you lack a good "system", even if your "Knowledge" is good.
+             </p>
+           </div>
         </div>
 
-        {/* SWOT Boxes */}
-        <h2>Your Strength & Weakness</h2>
+        {/* --- ROW 2: EP --- */}
+        <div style={rowStyle}>
+           <div style={{ flex: "0 0 auto" }}>
+             <CircularScore 
+               value={scores.expected_percentile} 
+               color="#1db954" 
+               title="EP" 
+               rangeText={`${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`} 
+             />
+           </div>
+
+           <div style={boxStyle("#1db954", "#f0fff4")}>
+             <h3 style={{ margin: "0 0 8px 0", color: "#1db954", fontSize: "20px" }}>EP (Expected Percentile)</h3>
+             <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
+               If you continue <b>exactly</b> as you are today—without changing your habits—this is where you will land. This is the "Truth Mirror". It factors in your current leaks (distractions, weak revision) to predict your realistic outcome.
+             </p>
+           </div>
+        </div>
+
+        {/* --- ROW 3: PP --- */}
+        <div style={rowStyle}>
+           <div style={{ flex: "0 0 auto" }}>
+             <CircularScore 
+               value={scores.potential_percentile} 
+               color="#ff7a00" 
+               title="PP" 
+               rangeText={`${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`} 
+             />
+           </div>
+
+           <div style={boxStyle("#ff7a00", "#fff8e6")}>
+             <h3 style={{ margin: "0 0 8px 0", color: "#ff7a00", fontSize: "20px" }}>PP (Potential Percentile)</h3>
+             <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
+               This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
+             </p>
+           </div>
+        </div>
+
+
+        {/* --- SWOT SECTION --- */}
+        <h2 style={{ marginTop: "50px" }}>Your Strength & Weakness</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
-        {/* Buttons */}
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "30px" }}>
-          
+        {/* --- BUTTONS --- */}
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "40px", flexWrap: "wrap" }}>
           <button
             onClick={() => setShowEmailModal(true)}
             style={{
@@ -564,6 +556,7 @@ export default function StudentSwotForm() {
             View Sample Report
           </button>
         </div>
+      
 
 {/* --- YOUTUBE BUTTON --- */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
