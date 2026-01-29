@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import "./landing.css";
 
 const ClockIcon = () => (
@@ -49,6 +50,39 @@ export default function Landing() {
 
   return (
     <div className="landing">
+      <Helmet>
+        <title>JEE Readiness Assessment 2026 | Free AI Analysis Report</title>
+        <meta name="description" content="Is your JEE preparation on track? Take this free 2-minute diagnostic test used by toppers to check your predicted percentile and get a SWOT analysis." />
+        <meta name="keywords" content="JEE Main 2026, JEE Advanced, Mock Test Analysis, JEE Readiness Quiz, IIT JEE Preparation, Predicted Percentile" />
+        <link rel="canonical" href="https://report.jeesociety.in/" />
+        
+        {/* Open Graph (Facebook/WhatsApp) */}
+        <meta property="og:title" content="Are you ready for JEE 2026? Check your Score." />
+        <meta property="og:description" content="Take the 2-minute diagnostic test used by toppers. Get your predicted percentile and strategy report." />
+        <meta property="og:url" content="https://report.jeesociety.in/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://report.jeesociety.in/preview-card.png" />
+
+        {/* Structured Data (Google Rich Snippets) */}
+        <script type="application/ld+json">
+        {`
+          {
+            "@context": "https://schema.org",
+            "@type": "Quiz",
+            "name": "JEE Readiness Assessment",
+            "description": "Diagnostic tool to analyze JEE preparation level.",
+            "url": "https://report.jeesociety.in/",
+            "educationalUse": "Assessment",
+            "audience": { "@type": "EducationalAudience", "educationalRole": "student" },
+            "provider": {
+              "@type": "Organization",
+              "name": "JEE Society",
+              "logo": "https://report.jeesociety.in/JEEsociety_logo.png"
+            }
+          }
+        `}
+        </script>
+      </Helmet>
       {/* Header */}
       <header className="landing-header">
         <div className="brand">JEEsociety</div>

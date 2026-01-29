@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../swot.css";
 import { computeScores } from "../utils/score";
+import { Helmet } from "react-helmet-async";
 
 import {
   StrengthResponses,
@@ -725,6 +726,12 @@ export default function StudentSwotForm() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#fafafa", padding: "20px 12px" }}>
+      <Helmet>
+        <title>Start Assessment | JEE Society</title>
+        <meta name="description" content="Answer 18 questions to analyze your JEE Main & Advanced consistency, focus, and syllabus coverage." />
+        <link rel="canonical" href="https://report.jeesociety.in/assessment" />
+        <meta name="robots" content="noindex" /> {/* Optional: Keep Google away from the quiz questions directly? Usually yes. */}
+      </Helmet>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
         <div style={{
           background: "#fff", padding: "28px", borderRadius: "18px",
