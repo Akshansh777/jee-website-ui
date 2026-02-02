@@ -6,6 +6,7 @@ const sampleData = {
   name: "Sreyash",
   jee_society_score: 62,
   expected_percentile: 84.2,
+  attempt_type: "2026",
 
   swot: {
     strengths: "Consistent, resilient",
