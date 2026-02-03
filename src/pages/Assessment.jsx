@@ -387,7 +387,7 @@ export default function StudentSwotForm() {
       email: email,
       name: answers["name"] || "Future IITian",
       answers: answers,
-      score: jee_society_score,
+      score: result.jee_society_score,
       target_attempt: attemptLabel, // Sends "April Attempt 2026"
       expected_percentile: expected_percentile_range, // Sends array [min, max]
       potential_percentile: potential_percentile_range, // Sends array [min, max]
