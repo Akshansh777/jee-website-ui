@@ -379,34 +379,41 @@ export default function StudentSwotForm() {
 
     setIsSending(true);
 
-    // 1. Calculate Scores
+    // 1. Calculate Scores & Destructure ALL required fields
     const result = computeScores(answers);
-    const { jee_society_score } = result;
+    const { 
+      jee_society_score, 
+      expected_percentile_range, 
+      potential_percentile_range 
+    } = result;
 
     // 2. DYNAMIC ATTEMPT LABEL (Strict User Choice)
+    // We explicitly grab the text of the option the user clicked.
     const q17Obj = QUESTIONS.find(q => q.id === "q17");
     const attemptIndex = answers["q17"];
     
-    // Logic: We explicitly grab the text of the option the user clicked (Index 0 or 1).
-    // If for some reason the data is missing, we check the question's first option dynamically.
+    // Safety check: if user didn't answer Q17, default to "JEE Main"
     const attemptLabel = (q17Obj && q17Obj.options[attemptIndex]) 
         ? q17Obj.options[attemptIndex] 
-        : (q17Obj ? q17Obj.options[0] : "JEE Main"); 
+        : "JEE Main"; 
 
-    // 3. SAFE PERCENTILE LOGIC
-    // We safeguard against crashes by using [0,0] if the range is missing
-    const expected_percentile = result.expected_percentile_range || [0, 0];
-    const potential_percentile = result.potential_percentile_range || [0, 0];
+    // 3. SAFE PERCENTILE FALLBACKS
+    // If for some reason the calculation fails, send [0,0] to prevent backend crash
+    const safeExpected = expected_percentile_range || [0, 0];
+    const safePotential = potential_percentile_range || [0, 0];
 
     // Prepare payload
     const payload = {
       email: email,
       name: answers["name"] || "Future IITian",
       answers: answers,
-      score: result.jee_society_score,
-      target_attempt: attemptLabel, // Sends "April Attempt 2026"
-      expected_percentile: expected_percentile_range, // Sends array [min, max]
-      potential_percentile: potential_percentile_range, // Sends array [min, max]
+      
+      score: jee_society_score,
+      target_attempt: attemptLabel,
+      
+     
+      expected_percentile: safeExpected,
+      potential_percentile: safePotential,
 
       swot: {
         strengths: finalSWOT.S,
