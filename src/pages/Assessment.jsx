@@ -379,8 +379,24 @@ export default function StudentSwotForm() {
 
     setIsSending(true);
 
-    // Calculate score using the new logic for the backend payload
+    // 1. Calculate Scores
     const result = computeScores(answers);
+    const { jee_society_score } = result;
+
+    // 2. DYNAMIC ATTEMPT LABEL (Strict User Choice)
+    const q17Obj = QUESTIONS.find(q => q.id === "q17");
+    const attemptIndex = answers["q17"];
+    
+    // Logic: We explicitly grab the text of the option the user clicked (Index 0 or 1).
+    // If for some reason the data is missing, we check the question's first option dynamically.
+    const attemptLabel = (q17Obj && q17Obj.options[attemptIndex]) 
+        ? q17Obj.options[attemptIndex] 
+        : (q17Obj ? q17Obj.options[0] : "JEE Main"); 
+
+    // 3. SAFE PERCENTILE LOGIC
+    // We safeguard against crashes by using [0,0] if the range is missing
+    const expected_percentile = result.expected_percentile_range || [0, 0];
+    const potential_percentile = result.potential_percentile_range || [0, 0];
 
     // Prepare payload
     const payload = {
