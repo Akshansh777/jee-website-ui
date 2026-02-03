@@ -464,8 +464,12 @@ img { width:100%; display:block; }
   <img src="${coverImg}">
   <div class="cover-info">
     <strong>Name:</strong> ${data.name}<br>
+    <strong>Target:</strong> ${data.target_attempt || "JEE Main"}<br>
     <strong>JEE Society Score:</strong> ${data.jee_society_score}<br>
-    <strong>Expected Percentile:</strong> ${data.expected_percentile}
+    <strong>Expected Percentile:</strong> 
+    ${Array.isArray(data.expected_percentile) 
+       ? data.expected_percentile.join("% - ") + "%" 
+       : data.expected_percentile || "Calculating..."}
   </div>
 </div>
 
@@ -474,10 +478,14 @@ img { width:100%; display:block; }
   <img src="${founderImg}" class="founder-bg-img">
   <div class="founder-score-box">
     <strong>JEE Society Score (Readiness Index):</strong> ${data.jee_society_score}/100<br><br>
+    
     <strong>Current Projected Percentile:</strong>
-    ${data.expected_percentile_range?.[0] || "N/A"} - ${data.expected_percentile_range?.[1] || "N/A"}<br><br>
+    ${Array.isArray(data.expected_percentile) ? data.expected_percentile[0] : "N/A"} - 
+    ${Array.isArray(data.expected_percentile) ? data.expected_percentile[1] : "N/A"}%<br><br>
+    
     <strong>Projected Percentile (If Key Corrections Are Made):</strong>
-    ${data.potential_percentile_range?.[0] || "N/A"} - ${data.potential_percentile_range?.[1] || "N/A"}
+    ${Array.isArray(data.potential_percentile) ? data.potential_percentile[0] : "N/A"} - 
+    ${Array.isArray(data.potential_percentile) ? data.potential_percentile[1] : "N/A"}%
   </div>
 </div>
 
