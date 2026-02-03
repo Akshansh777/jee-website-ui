@@ -48,7 +48,7 @@ function distortMindset(raw) {
 // ---------- main ----------
 async function generatePDF(data) {
 
-  const attemptType = data.attempt_type || "2026";
+  const attemptType = data.target_attempt && data.target_attempt.includes("2027") ? "2027" : "2026";
 
   const coverImg = imgToBase64(path.resolve(__dirname, "assets/cover.png"));
   const founderImg = imgToBase64(path.resolve(__dirname, "assets/founder.png"));
