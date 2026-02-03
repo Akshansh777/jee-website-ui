@@ -387,8 +387,11 @@ export default function StudentSwotForm() {
       email: email,
       name: answers["name"] || "Future IITian",
       answers: answers,
-      score: result.jee_society_score, // Using new score
-      // You can also pass the projected ranges if your backend supports them
+      score: jee_society_score,
+      target_attempt: attemptLabel, // Sends "April Attempt 2026"
+      expected_percentile: expected_percentile_range, // Sends array [min, max]
+      potential_percentile: potential_percentile_range, // Sends array [min, max]
+
       swot: {
         strengths: finalSWOT.S,
         weaknesses: finalSWOT.W,
@@ -423,15 +426,24 @@ export default function StudentSwotForm() {
   };
 
 
-  // ---------------- RENDER: RESULTS PAGE (Fixed Layout) ----------------
+  // ---------------- RENDER: RESULTS PAGE (FIXED) ----------------
   if (showSWOT) {
     const scores = computeScores(answers);
     const { jee_society_score, expected_percentile_range, potential_percentile_range } = scores;
 
+    // 1. FIX: Calculate Average for the Circle Value (since you only have a range [min, max])
+    // If range is [90, 94], the circle should show progress for 92.
+    const epValue = (expected_percentile_range[0] + expected_percentile_range[1]) / 2;
+    const ppValue = (potential_percentile_range[0] + potential_percentile_range[1]) / 2;
+
+    // 2. FIX: specific logic to get the text for the "Attempt" answer
+    const attemptIndex = answers["q17"];
+    const attemptLabel = QUESTIONS.find(q => q.id === "q17").options[attemptIndex] || "JEE Main";
+
     // Helper Style for the "Row" layout
     const rowStyle = {
       display: "flex",
-      flexWrap: "wrap", // ✅ This makes it Stack on Mobile, Row on PC
+      flexWrap: "wrap",
       alignItems: "center",
       justifyContent: "center",
       gap: "30px",
@@ -441,8 +453,8 @@ export default function StudentSwotForm() {
 
     // Helper Style for the Text Box
     const boxStyle = (color, bg) => ({
-      flex: "1 1 300px", // Grow to fill space, but wrap if screen is small
-      minWidth: "280px", // Prevent it from getting too thin
+      flex: "1 1 300px",
+      minWidth: "280px",
       background: bg,
       padding: "20px",
       borderRadius: "12px",
@@ -452,16 +464,19 @@ export default function StudentSwotForm() {
 
     return (
       <div className="swot-container">
-        <h2 style={{ marginBottom: "40px", fontSize: "28px" }}>Your Performance Summary</h2>
+        <h2 style={{ marginBottom: "10px", fontSize: "28px" }}>Your Performance Summary</h2>
+        
+        {/* 3. FIX: Display the Target Attempt */}
+        <div style={{ marginBottom: "40px", color: "#666", fontSize: "18px", background: "#f1f1f1", display: "inline-block", padding: "8px 20px", borderRadius: "20px" }}>
+          Target: <strong>{attemptLabel}</strong>
+        </div>
         
         {/* --- ROW 1: JSS --- */}
         <div style={rowStyle}>
-           {/* Circle on Left (Top on Mobile) */}
            <div style={{ flex: "0 0 auto" }}>
               <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
            </div>
            
-           {/* Text on Right (Bottom on Mobile) */}
            <div style={boxStyle("#6a11cb", "#f8f9fa")}>
              <h3 style={{ margin: "0 0 8px 0", color: "#6a11cb", fontSize: "20px" }}>JSS (JEEsociety Score)</h3>
              <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
@@ -473,8 +488,9 @@ export default function StudentSwotForm() {
         {/* --- ROW 2: EP --- */}
         <div style={rowStyle}>
            <div style={{ flex: "0 0 auto" }}>
+             {/* 4. FIX: Use epValue here so the circle actually fills up */}
              <CircularScore 
-               value={scores.expected_percentile} 
+               value={epValue}  
                color="#1db954" 
                title="EP" 
                rangeText={`${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`} 
@@ -492,8 +508,9 @@ export default function StudentSwotForm() {
         {/* --- ROW 3: PP --- */}
         <div style={rowStyle}>
            <div style={{ flex: "0 0 auto" }}>
+             {/* 5. FIX: Use ppValue here */}
              <CircularScore 
-               value={scores.potential_percentile} 
+               value={ppValue}  
                color="#ff7a00" 
                title="PP" 
                rangeText={`${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`} 
@@ -507,7 +524,6 @@ export default function StudentSwotForm() {
              </p>
            </div>
         </div>
-
 
         {/* --- SWOT SECTION --- */}
         <h2 style={{ marginTop: "50px" }}>Your Strength & Weakness</h2>
@@ -557,9 +573,8 @@ export default function StudentSwotForm() {
             View Sample Report
           </button>
         </div>
-      
 
-{/* --- YOUTUBE BUTTON --- */}
+        {/* --- YOUTUBE BUTTON --- */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <a 
             href="https://www.youtube.com/@SreyashBhaiyaIITB" 
@@ -602,29 +617,11 @@ export default function StudentSwotForm() {
         </div>
         
         {/* Report Content Details */}
-        <details style={{ 
-          marginTop: "30px", 
-          marginBottom: "30px",
-          textAlign: "center",
-          cursor: "pointer"
-        }}>
-          <summary style={{ 
-            fontWeight: "bold", 
-            fontSize: "18px", 
-            marginBottom: "10px",
-            outline: "none"
-          }}>
+        <details style={{ marginTop: "30px", marginBottom: "30px", textAlign: "center", cursor: "pointer" }}>
+          <summary style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "10px", outline: "none" }}>
             What will your report contain?
           </summary>
-
-          <ul style={{ 
-            display: "inline-block", 
-            textAlign: "left", 
-            maxWidth: "550px",
-            paddingLeft: "20px",
-            lineHeight: "1.8", 
-            color: "#555" 
-          }}>
+          <ul style={{ display: "inline-block", textAlign: "left", maxWidth: "550px", paddingLeft: "20px", lineHeight: "1.8", color: "#555" }}>
               <li><strong>Trajectory Insight:</strong> Visual graph of your predicted vs. potential growth.</li>
               <li><strong>Detailed SWOT Snapshot:</strong> Deep dive into your Strengths, Weaknesses, Opportunities, and Threats.</li>
               <li><strong>Health & Environment Audit:</strong> Analysis of your physical stamina and study space.</li>
@@ -641,7 +638,8 @@ export default function StudentSwotForm() {
             display: "flex", justifyContent: "center", alignItems: "center",
             zIndex: 1000
           }}>
-            <div style={{
+             {/* ... (Modal Content) ... */}
+             <div style={{
               background: "white", padding: "30px", borderRadius: "16px",
               width: "90%", maxWidth: "400px", boxShadow: "0 20px 50px rgba(0,0,0,0.2)",
               textAlign: "center", animation: "slideUp 0.4s ease"
