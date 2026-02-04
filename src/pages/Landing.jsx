@@ -3,215 +3,270 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import "./landing.css";
 
-const ClockIcon = () => (
-  <svg viewBox="0 0 24 24" className="icon-svg sketch">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v6l4 2" />
-  </svg>
+// --- COMPONENTS FOR TESTIMONIALS ---
+
+const YouTubeComment = ({ name, content, avatar, time }) => (
+  <div className="youtube-card">
+    <div className="yt-header">
+      <div className="yt-avatar">{avatar}</div>
+      <div className="yt-info">
+        <div className="yt-name-row">
+          <span className="yt-name">{name}</span>
+          <span className="yt-time">{time}</span>
+        </div>
+        <p className="yt-content">{content}</p>
+        <div className="yt-actions">
+          <div className="yt-likes">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+            </svg>
+            <span>{Math.floor(Math.random() * 50) + 10}</span>
+          </div>
+          <span className="yt-reply">Reply</span>
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
-const TargetIcon = () => (
-  <svg viewBox="0 0 24 24" className="icon-svg sketch">
-    <circle cx="12" cy="12" r="9" />
-    <circle cx="12" cy="12" r="5" />
-    <circle cx="12" cy="12" r="1.5" />
-  </svg>
+const WhatsAppMessage = ({ name, content, avatar, time }) => (
+  <div className="whatsapp-card">
+    <div className="wa-avatar">{avatar}</div>
+    <div className="wa-body">
+      <div className="wa-name">{name}</div>
+      <p className="wa-content">{content}</p>
+      <div className="wa-meta">
+        <span className="wa-time">{time}</span>
+        <svg className="wa-ticks" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+          <path d="M15.5 6.5L14 5 8.5 10.5l1.5 1.5 5.5-5.5z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
 );
 
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" className="icon-svg sketch">
-    <circle cx="12" cy="12" r="9" />
-    <path d="M8 12l3 3 5-6" />
-  </svg>
-);
-
-const TrophyIcon = () => (
-  <svg viewBox="0 0 24 24" className="icon-svg sketch">
-    {/* Cup */}
-    <path d="M7 4h10v3c0 4-3 7-5 7s-5-3-5-7V4z" />
-
-    {/* Handles */}
-    <path d="M7 5H4v2c0 3 2 5 5 5" />
-    <path d="M17 5h3v2c0 3-2 5-5 5" />
-
-    {/* Stem */}
-    <path d="M12 14v3" />
-
-    {/* Base */}
-    <path d="M9 20h6" />
-    <path d="M8 17h8" />
-  </svg>
-);
-
-
-
-export default function Landing() {
+const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="landing">
+    // ✅ SCOPED CLASS HERE: Matches the new CSS
+    <div className="landing-wrapper">
       <Helmet>
         <title>JEE Readiness Assessment 2026 | Free AI Analysis Report</title>
         <meta name="description" content="Is your JEE preparation on track? Take this free 2-minute diagnostic test used by toppers to check your predicted percentile and get a SWOT analysis." />
-        <meta name="keywords" content="JEE Main 2026, JEE Advanced, Mock Test Analysis, JEE Readiness Quiz, IIT JEE Preparation, Predicted Percentile" />
-        <link rel="canonical" href="https://report.jeesociety.in/" />
-        
-        {/* Open Graph (Facebook/WhatsApp) */}
-        <meta property="og:title" content="Are you ready for JEE 2026? Check your Score." />
-        <meta property="og:description" content="Take the 2-minute diagnostic test used by toppers. Get your predicted percentile and strategy report." />
-        <meta property="og:url" content="https://report.jeesociety.in/" />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://report.jeesociety.in/preview-card.png" />
-
-        {/* Structured Data (Google Rich Snippets) */}
-        <script type="application/ld+json">
-        {`
-          {
-            "@context": "https://schema.org",
-            "@type": "Quiz",
-            "name": "JEE Readiness Assessment",
-            "description": "Diagnostic tool to analyze JEE preparation level.",
-            "url": "https://report.jeesociety.in/",
-            "educationalUse": "Assessment",
-            "audience": { "@type": "EducationalAudience", "educationalRole": "student" },
-            "provider": {
-              "@type": "Organization",
-              "name": "JEE Society",
-              "logo": "https://report.jeesociety.in/JEEsociety_logo.png"
-            }
-          }
-        `}
-        </script>
       </Helmet>
-      {/* Header */}
-      <header className="landing-header">
-        <div className="brand">JEEsociety</div>
-        <a
-          className="youtube-link"
-          href="https://www.youtube.com/@SreyashBhaiyaIITB"
-          target="_blank"
-          rel="noreferrer"
-          style={{
-    padding: "6px 14px",
-    borderRadius: "8px",
-    textDecoration: "none",
-    color: "#c62828",
-    fontWeight: "500",
-    transition: "0.25s ease",
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.background = "#fdeaea";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.background = "transparent";
-  }}
->
-  YouTube
-</a>
-      </header>
 
-      {/* Hero */}
-      <section className="hero">
-        <h1
-  style={{
-    fontSize: "clamp(42px, 6vw, 72px)",
-    fontWeight: "700",
-    lineHeight: "1.1",
-    marginBottom: "14px",
-  }}
->
-          Is JEE Still <span>Possible?</span>
-        </h1>
-        <p>
-          Take your 5-minute readiness check and get a personalized roadmap
+      {/* --- NAVBAR --- */}
+      <nav className="navbar">
+        <div className="nav-brand">
+          <img src="/JEEsociety_logo.png" alt="Logo" className="nav-logo" />
+          <span>JEE<span style={{ color: "#c62828" }}>society</span></span>
+        </div>
+        <a 
+          href="https://www.youtube.com/@SreyashBhaiyaIITB" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="yt-btn"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+          </svg>
+          YouTube
+        </a>
+      </nav>
+
+      {/* --- HERO SECTION --- */}
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Is Your JEE Prep <br/>
+            <span className="hero-highlight">Actually Working?</span>
+          </h1>
+          <h2 className="hero-subtitle">Most Aspirants Are Studying Blind.</h2>
+          <p className="hero-desc">
+            Stop guessing. In just <strong>5 minutes</strong>, get the data-backed roadmap that separates the <strong>Toppers</strong> from the crowd. See your real standing and predicted rank.
+          </p>
+          
+          <button onClick={() => navigate("/assessment")} className="cta-main">
+            Check My Readiness Now &rarr;
+          </button>
+          
+          <div style={{ marginTop: "20px", fontSize: "14px", color: "#888", display: "flex", alignItems: "center", gap: "8px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Takes only 5 minutes
+          </div>
+        </div>
+
+        <div className="hero-visual-container">
+          <img src="/hero-visual.png" alt="JEE Report Preview" className="hero-img" />
+        </div>
+      </section>
+
+      {/* --- TESTIMONIALS (MARQUEE) --- */}
+      <section className="testimonials-section">
+        <div style={{ textAlign: "center" }}>
+          <span className="section-badge" style={{ background: "#e0e7ff", color: "#4338ca" }}>Real Student Feedback</span>
+          <h2 className="section-title">What Aspirants Are Saying</h2>
+        </div>
+
+        <div className="scroll-container">
+          {/* Loop twice for infinite scroll effect */}
+          {[...testimonials, ...testimonials].map((t, i) => (
+            <div key={i} className="testimonial-wrapper">
+              {t.type === "youtube" ? (
+                <YouTubeComment {...t} />
+              ) : (
+                <WhatsAppMessage {...t} />
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --- FEATURES --- */}
+      <section className="features-section">
+        <span className="section-badge" style={{ background: "#fee2e2", color: "#b91c1c" }}>Why It Works</span>
+        <h2 className="section-title">
+          Why <span className="hero-highlight">10,000+ Serious Aspirants</span><br/>
+          Trust This Diagnostic
+        </h2>
+        <p style={{ maxWidth: "600px", margin: "0 auto", color: "#64748b" }}>
+          Our data-driven approach goes deeper than any mock test to reveal your true JEE readiness.
         </p>
 
-        <button className="hero-btn" onClick={() => navigate("/assessment")}>
-          Start Your Assessment →
-        </button>
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="icon-box icon-purple">🧠</div>
+            <h3 className="f-title">Beyond Mock Scores</h3>
+            <p className="f-desc">We analyze hidden factors like consistency, focus depth, and syllabus coverage—not just your knowledge.</p>
+          </div>
+          <div className="feature-card">
+            <div className="icon-box icon-green">📊</div>
+            <h3 className="f-title">Accurate Percentile Prediction</h3>
+            <p className="f-desc">Our algorithm compares your habits against successful IITians to predict your realistic rank range (EP & PP).</p>
+          </div>
+          <div className="feature-card">
+            <div className="icon-box icon-orange">📋</div>
+            <h3 className="f-title">A Personalized Action Plan</h3>
+            <p className="f-desc">Don't get generic advice. Get specific guidelines to fix your exact weaknesses immediately.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* --- DARK CTA --- */}
+      <section className="dark-cta-section">
+        <div className="glow-icon">✨</div>
+        <h2 className="dark-title">
+          The Gap Between a <span className="text-orange">Dreamer</span><br/>
+          and an <span className="text-green">IITian</span> is Clarity.
+        </h2>
+        <p className="dark-subtitle">
+          Don't waste another week confused. Get your reality check today.
+        </p>
         
-      </section>
-<div style={{ textAlign: "center", marginTop: "-10px", marginBottom: "30px" }}>
-  <p style={{ 
-    fontSize: "16px", 
-    color: "#666",
-    marginTop: "-41px",
-    marginBottom: "10px"
-  }}>
-    ⏱ Takes only 5 minutes
-  </p>
-</div>
-      {/* Features */}
-      <section className="features">
-  {[
-    { Icon: ClockIcon, title: "5-Minute Check", desc: "Quick yet comprehensive assessment" },
-    { Icon: TargetIcon, title: "Personalized Score", desc: "Get your JEEsociety Score" },
-    { Icon: CheckIcon, title: "SWOT Analysis", desc: "Know your strengths & weaknesses" },
-    { Icon: TrophyIcon, title: "Action Plan", desc: "3-step strategy to improve" }
-  ].map(({ Icon, title, desc }) => (
-    <div className="feature-card" key={title}>
-      <div className="icon-wrapper">
-        <Icon />
-      </div>
-      <h3>{title}</h3>
-      <p>{desc}</p>
-    </div>
-  ))}
-</section>
-
-{/* Divider */}
-<div className="section-divider" />
-
-<section className="trust-section">
-  <p className="trust-label">TRUSTED BY JEE ASPIRANTS</p>
-
-  <div className="trust-stats">
-    <div> 
-      <h2>1000+</h2>
-      <span>Assessments Taken</span>
-    </div>
-
-    <div className="trust-v-divider" />
-
-    <div>
-      <h2>4.9/5</h2>
-      <span>Student Rating</span>
-    </div>
-  </div>
-</section>
-
-{/* Divider */}
-<div className="section-divider" />
-
-
-      {/* CTA */}
-      <section className="cta">
-        <h2>Ready to know where you stand?</h2>
-        <p>Get your personalized JEEsociety assessment report with IIT/NIT probability, SWOT analysis, and actionable strategies.
-
-</p>
-        <button onClick={() => navigate("/assessment")}>
-          𝐓𝐚𝐤𝐞 𝐭𝐡𝐞 𝟓-𝐌𝐢𝐧𝐮𝐭𝐞 𝐂𝐡𝐞𝐜𝐤 →
+        {/* ✅ UPDATED SHIMMER BUTTON */}
+        <button onClick={() => navigate("/assessment")} className="shimmer-btn">
+          {/* Spark Container */}
+          <div className="shimmer-spark-container">
+            <div className="shimmer-spark">
+              <div className="shimmer-spark-inner" />
+            </div>
+          </div>
+          
+          {/* Backdrop */}
+          <div className="shimmer-backdrop" />
+          
+          {/* Highlight */}
+          <div className="shimmer-highlight" />
+          
+          {/* Text Content */}
+          <span className="shimmer-text">
+            Get My Free Detailed Report &rarr;
+          </span>
         </button>
       </section>
-      <footer className="landing-footer">
-  <p>
-    <span className="brand">JEEsociety</span> | Empowering Aspirants
-  </p>
 
-  <p className="quote">"𝐈 𝐚𝐦 𝐭𝐡𝐞 𝐁𝐞𝐬𝐭 "</p>
-
-  <p className="footer-link">
-    <a
-      href="https://www.youtube.com/@SreyashBhaiyaIITB"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      YouTube
-    </a>
-  </p>
-</footer>
+      {/* --- FOOTER --- */}
+      <footer className="footer">
+        <div className="nav-brand" style={{ fontSize: "18px" }}>
+          <img src="/JEEsociety_logo.png" alt="Logo" className="nav-logo" style={{height:"30px", width:"30px"}} />
+          <span>JEE<span style={{ color: "#c62828" }}>society</span></span>
+          <span style={{ fontSize: "12px", color: "#999", marginLeft: "10px", fontWeight: "400" }}>© 2026 JEEsociety. All rights reserved.</span>
+        </div>
+        
+        <div className="footer-links">
+          <a href="#" className="footer-link">Privacy Policy</a>
+          <a href="#" className="footer-link">Terms of Service</a>
+          <a href="https://www.youtube.com/@SreyashBhaiyaIITB" target="_blank" className="footer-link">YouTube</a>
+        </div>
+        
+        <div style={{ width: "100%", textAlign: "center", marginTop: "30px", fontSize: "12px", color: "#999" }}>
+          Built with ❤️ for JEE Aspirants across India
+        </div>
+      </footer>
     </div>
   );
-}
+};
 
+// --- DATA: Testimonials ---
+const testimonials = [
+  {
+    type: "youtube",
+    name: "Sreyash M***",
+    content: "Sreyash bhaiya, that JSS score was a reality check. Changed my whole strategy for Chem. 🔥",
+    avatar: "SM",
+    time: "2 weeks ago",
+  },
+  {
+    type: "whatsapp",
+    name: "Arjun K***",
+    content: "Sir, the report accurately predicted I was wasting time on lectures. The consistency meter was spot on 💯",
+    avatar: "AK",
+    time: "Yesterday",
+  },
+  {
+    type: "youtube",
+    name: "Priya S***",
+    content: "Finally a tool that doesn't just give a mock test score but tells you WHY you are stuck. This is gold!",
+    avatar: "PS",
+    time: "1 month ago",
+  },
+  {
+    type: "whatsapp",
+    name: "Rahul V***",
+    content: "My PP percentile was 85-88% but EP was 70-75%. Now I know exactly what to fix before mains 🎯",
+    avatar: "RV",
+    time: "3 days ago",
+  },
+  {
+    type: "youtube",
+    name: "Ananya R***",
+    content: "The action plan section alone is worth more than any coaching advice I've received. Subscribed! 🙌",
+    avatar: "AR",
+    time: "3 weeks ago",
+  },
+  {
+    type: "whatsapp",
+    name: "Vikash P***",
+    content: "Showed my report to parents. They finally understand why I need to change my study approach",
+    avatar: "VP",
+    time: "5 hours ago",
+  },
+  {
+    type: "youtube",
+    name: "Neha G***",
+    content: "From 45 to 78 JSS score in 2 months just by following the execution guidelines. Insane results! 📈",
+    avatar: "NG",
+    time: "1 week ago",
+  },
+  {
+    type: "whatsapp",
+    name: "Amit S***",
+    content: "Bhaiya the SWOT analysis exposed my weakness in organic. Working on it now 💪",
+    avatar: "AS",
+    time: "Just now",
+  },
+];
+
+export default Landing;
