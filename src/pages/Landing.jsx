@@ -83,7 +83,7 @@ const Landing = () => {
             IS JEE <br/>
             <span className="hero-highlight">STILL POSSIBLE?</span>
           </h1>
-          <h2 className="hero-subtitle">We know you have this question :) This Free Al tool answers it accurately!</h2>
+          <h2 className="hero-subtitle">In just 5 minutes, get a data-backed roadmap that shows your real standing, predicted rank, and what exactly you are doing wrong</h2>
           
           
           <button onClick={() => navigate("/assessment")} className="cta-main">

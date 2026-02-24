@@ -866,7 +866,7 @@ export default function StudentSwotForm() {
   textShadow: "0px 4px 15px rgba(124, 58, 237, 0.15)",
   lineHeight: "1.3"
 }}>
-  Great choice! Here are your reports:
+  Your performance report is ready:
 </h3>
               <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
                 
