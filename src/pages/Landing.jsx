@@ -80,16 +80,14 @@ const Landing = () => {
       <section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            Is Your JEE Prep <br/>
-            <span className="hero-highlight">Actually Working?</span>
+            IS JEE <br/>
+            <span className="hero-highlight">STILL POSSIBLE?</span>
           </h1>
-          <h2 className="hero-subtitle">Most Aspirants Are Studying Blind.</h2>
-          <p className="hero-desc">
-            Stop guessing. In just <strong>5 minutes</strong>, get the data-backed roadmap that separates the <strong>Toppers</strong> from the crowd. See your real standing and predicted rank.
-          </p>
+          <h2 className="hero-subtitle">We know you have this question :) This Free Al tool answers it accurately!</h2>
+          
           
           <button onClick={() => navigate("/assessment")} className="cta-main">
-            Check My Readiness Now &rarr;
+            Check Your Probability &rarr;
           </button>
           
           <div style={{ marginTop: "20px", fontSize: "14px", color: "#888", display: "flex", alignItems: "center", gap: "8px" }}>
@@ -139,17 +137,18 @@ const Landing = () => {
           <div className="feature-card">
             <div className="icon-box icon-purple">🧠</div>
             <h3 className="f-title">Beyond Mock Scores</h3>
-            <p className="f-desc">We analyze hidden factors like consistency, focus depth, and syllabus coverage—not just your knowledge.</p>
+            <p className="f-desc">We analyze hidden factors like consistency, focus depth, and syllabus coverage - not just your knowledge.</p>
           </div>
           <div className="feature-card">
             <div className="icon-box icon-green">📊</div>
             <h3 className="f-title">Accurate Percentile Prediction</h3>
-            <p className="f-desc">Our algorithm compares your habits against successful IITians to predict your realistic rank range (EP & PP).</p>
+            <p className="f-desc">Our algorithm compares your habits against successful IITians to predict your realistic rank range (Expected Percentile & Potential Percentile).</p>
           </div>
           <div className="feature-card">
             <div className="icon-box icon-orange">📋</div>
             <h3 className="f-title">A Personalized Action Plan</h3>
-            <p className="f-desc">Don't get generic advice. Get specific guidelines to fix your exact weaknesses immediately.</p>
+            <p className="f-desc">Know your exact weaknesses. Get specific guidelines to fix
+your weaknesses immediately.</p>
           </div>
         </div>
       </section>
@@ -213,9 +212,9 @@ const Landing = () => {
 const testimonials = [
   {
     type: "youtube",
-    name: "Sreyash M***",
+    name: "Raghav M***",
     content: "Sreyash bhaiya, that JSS score was a reality check. Changed my whole strategy for Chem. 🔥",
-    avatar: "SM",
+    avatar: "RM",
     time: "2 weeks ago",
   },
   {

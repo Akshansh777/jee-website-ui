@@ -250,25 +250,27 @@ const QUESTIONS = [
   }
 ];
 
-// --- HELPER COMPONENT: ---
+// --- HELPER COMPONENT: (Upgraded with auto-wrapping text) ---
 const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
-  const radius = 70; // Increased size (was 50)
-  const strokeWidth = 12; // Thicker border
-  const size = 180; // SVG ViewBox size
+  const radius = 70; 
+  const strokeWidth = 12; 
+  const size = 180; 
   const center = size / 2;
   
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (Math.min(value, max) / max) * circumference;
 
+  // Smart Font Size: Large for "JSS", smaller for "Potential Percentile"
+  const titleFontSize = title.length > 5 ? "16px" : "28px";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
-      <div style={{ width: "180px", height: "180px", position: "relative" }}>
-        <svg width="180" height="180" viewBox={`0 0 ${size} ${size}`}>
+      <div style={{ width: "180px", height: "180px", position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        
+        {/* SVG for the circles */}
+        <svg width="180" height="180" viewBox={`0 0 ${size} ${size}`} style={{ position: "absolute", top: 0, left: 0 }}>
           {/* Background Circle */}
-          <circle 
-            cx={center} cy={center} r={radius} 
-            stroke="#eee" strokeWidth={strokeWidth} fill="none" 
-          />
+          <circle cx={center} cy={center} r={radius} stroke="#eee" strokeWidth={strokeWidth} fill="none" />
           
           {/* Progress Circle */}
           <circle
@@ -280,36 +282,229 @@ const CircularScore = ({ value, max = 100, color, title, rangeText }) => {
             transform={`rotate(-90 ${center} ${center})`}
             style={{ transition: "stroke-dashoffset 1s ease-out" }}
           />
-          
-          {/* Title (JSS/EP/PP) */}
-          <text 
-            x={center} y={center - 15} 
-            textAnchor="middle" 
-            fontSize="28" fontWeight="900" fill={color}
-            style={{ filter: "drop-shadow(0px 2px 2px rgba(0,0,0,0.1))" }}
-          >
-            {title}
-          </text>
-          
-          {/* Range Text (The Numbers) - MUCH BIGGER NOW */}
-          <text 
-            x={center} y={center + 20} 
-            textAnchor="middle" 
-            fontSize="18" fontWeight="700" fill="#444"
-          >
-            {rangeText}
-          </text>
         </svg>
+
+        {/* HTML Text Box (Handles Word Wrapping!) */}
+        <div style={{ position: "relative", zIndex: 2, textAlign: "center", maxWidth: "110px" }}>
+          <div style={{ 
+            fontSize: titleFontSize, 
+            fontWeight: "900", 
+            color: color, 
+            lineHeight: "1.15",
+            marginBottom: "4px",
+            filter: "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))"
+          }}>
+            {title}
+          </div>
+          <div style={{ fontSize: "16px", fontWeight: "800", color: "#444" }}>
+            {rangeText}
+          </div>
+        </div>
+
       </div>
     </div>
   );
 };
+// --- 1. CLEAN EP CIRCLE (WITH MINIMAL ANIMATION) ---
+const CleanEPCircle = ({ value, max = 100, color = "#1db954", title, rangeText }) => {
+  const size = 260;
+  const center = size / 2;
+  const radius = 100; 
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (Math.min(value, max) / max) * circumference;
+
+  return (
+    <div style={{ position: "relative", width: `${size}px`, height: `${size}px`, margin: "0 auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
+      
+      {/* MINIMAL CSS ANIMATIONS */}
+      <style>{`
+        /* Slow, smooth rotation for the outer accent ring */
+        @keyframes minimal-spin {
+          100% { transform: rotate(360deg); }
+        }
+        /* Gentle breathing glow for the progress arc */
+        @keyframes minimal-pulse {
+          0%, 100% { filter: drop-shadow(0px 4px 4px rgba(29, 185, 84, 0.3)); }
+          50% { filter: drop-shadow(0px 4px 12px rgba(29, 185, 84, 0.6)); }
+        }
+      `}</style>
+
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ position: "absolute", zIndex: 2 }}>
+        <defs>
+          <linearGradient id="ep-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#4facfe" /> 
+            <stop offset="100%" stopColor={color} /> 
+          </linearGradient>
+        </defs>
+
+        {/* NEW: Minimalist slow-spinning outer dashed ring */}
+        <circle 
+          cx={center} cy={center} r={radius + 14} 
+          stroke="#cbd5e1" strokeWidth="1.5" fill="none" 
+          strokeDasharray="4 16" opacity="0.6"
+          style={{ transformOrigin: "center", animation: "minimal-spin 35s linear infinite" }} 
+        />
+
+        {/* Clean Base Track */}
+        <circle cx={center} cy={center} r={radius} stroke="#f1f5f9" strokeWidth="14" fill="none" />
+
+        {/* Main Animated Progress Arc (Now with the breathing glow) */}
+        <circle
+          cx={center} cy={center} r={radius}
+          stroke="url(#ep-gradient)" strokeWidth="14" fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${center} ${center})`}
+          style={{ 
+            transition: "stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)",
+            animation: "minimal-pulse 3s infinite ease-in-out" 
+          }}
+        />
+      </svg>
+
+      {/* Center Text (With the bumped up font size for the numbers!) */}
+      <div style={{ position: "absolute", zIndex: 3, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", maxWidth: "160px" }}>
+        <span style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>
+          {title}
+        </span>
+        <span style={{ fontSize: "23px", fontWeight: "900", color: "#1db954", letterSpacing: "-0.5px" }}>
+          {rangeText}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+// --- 2. GOLDEN PP CIRCLE (ORBIT & SHIMMER - NO CLIPPING) ---
+const GoldenPPCircle = ({ value, max = 100, title, rangeText }) => {
+  const size = 220; 
+  const center = size / 2;
+  const radius = 85; 
+  const baseStroke = 14; 
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (Math.min(value, max) / max) * circumference;
+
+  return (
+    <div style={{ position: "relative", width: `${size}px`, height: `${size}px`, display: "flex", justifyContent: "center", alignItems: "center" }}>
+      
+      {/* Safe, Contained Animations */}
+      <style>{`
+        @keyframes gold-breathe {
+          0% { stroke-width: 14px; filter: drop-shadow(0 0 4px rgba(255, 140, 0, 0.4)); }
+          50% { stroke-width: 17px; filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8)); }
+          100% { stroke-width: 14px; filter: drop-shadow(0 0 4px rgba(255, 140, 0, 0.4)); }
+        }
+        @keyframes gold-spin { 100% { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* overflow: visible prevents the square clipping! */}
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ position: "absolute", top: 0, left: 0, overflow: "visible" }}>
+        <defs>
+           <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+             <stop offset="0%" stopColor="#ffd000" />
+             <stop offset="100%" stopColor="#ff7b00" />
+           </linearGradient>
+        </defs>
+
+        {/* Outer Golden Orbit (Tiny rotating dust particles) */}
+        <g style={{ transformOrigin: "center", animation: "gold-spin 20s linear infinite" }}>
+          <circle cx={center} cy={center} r={radius + 15} stroke="#ffb703" strokeWidth="1.5" fill="none" strokeDasharray="2 12" opacity="0.6" />
+        </g>
+        
+        {/* Inner Golden Orbit (Rotates slowly in reverse) */}
+        <g style={{ transformOrigin: "center", animation: "gold-spin 25s linear infinite reverse" }}>
+          <circle cx={center} cy={center} r={radius - 14} stroke="#ffb703" strokeWidth="1" fill="none" strokeDasharray="1 15" opacity="0.4" />
+        </g>
+
+        {/* Base Track */}
+        <circle cx={center} cy={center} r={radius} stroke="#fff8e6" strokeWidth={baseStroke} fill="none" />
+        
+        {/* Main Breathing Progress Arc */}
+        <circle
+          cx={center} cy={center} r={radius} 
+          stroke="url(#gold-grad)" fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${center} ${center})`}
+          style={{ 
+            transition: "stroke-dashoffset 1s ease-out",
+            animation: "gold-breathe 2.5s infinite ease-in-out" /* Animates thickness and soft glow */
+          }}
+        />
+      </svg>
+
+      {/* Center Text */}
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", maxWidth: "130px" }}>
+        <span style={{ fontSize: "18px", fontWeight: "900", color: "#ff8c00", lineHeight: "1.15", marginBottom: "6px" }}>
+          {title}
+        </span>
+        <span style={{ fontSize: "25px", fontWeight: "900", color: "#d97706" }}>
+          {rangeText}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export default function StudentSwotForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [showSWOT, setShowSWOT] = useState(false);
   const [finalSWOT, setFinalSWOT] = useState({ S: "", W: "", O: "", T: "" });
+
+// --- NEW STORY STYLES ---
+  const storyTextStyle = {
+    fontFamily: "'Pinyon Script', cursive", // The new calligraphy font
+    fontSize: "18px", // Large and elegant
+    color: "#000000", // Pure black
+    textAlign: "center",
+    maxWidth: "700px", // Prevents text from getting too wide on large screens
+    margin: "5px auto", // Generous spacing top/bottom, centered horizontally
+    lineHeight: "1.5",
+    padding: "0 20px", // Padding for mobile screens
+    textShadow: "0px 1px 1px rgba(0,0,0,0.1)" // Subtle shadow for depth
+  };
+
+  const bigButStyle = {
+    ...storyTextStyle, // Inherit base styles
+    fontSize: "25px", // Much bigger
+    fontWeight: "bold",
+    marginTop: "30px",
+    marginBottom: "10px", // Closer to the text below it
+  };
+
+  // -- ESCAPING BUTTON STATES --
+  const [showFinalButtons, setShowFinalButtons] = useState(false);
+  const [noCount, setNoCount] = useState(0);
+  const [noPos, setNoPos] = useState({ x: 0, y: 0 });
+
+  // Now, these texts will appear in the original spot!
+  const placeholderTexts = [
+    "Are you really sure?",
+    "So you're okay with your Expected Percentile?",
+    "Ignoring your weaknesses won't fix them...",
+    "Your competitors are downloading this right now.",
+    "Wait, are you seriously giving up?",
+    "Think about your dream IIT/NIT!",
+    "Don't let your Potential Percentile go to waste!",
+    "Last chance to find out your root causes...",
+    "I'm not letting you click me. Just click 'Yes'! 😤"
+  ];
+
+  // ONLY moves on click now
+  const moveNoButton = () => {
+    if (noCount < placeholderTexts.length) {
+      setNoCount(noCount + 1);
+    }
+    const isRight = noPos.x > 0;
+    const isDown = noPos.y > 60; 
+    const newX = (Math.random() * 80 + 60) * (isRight ? -1 : 1);
+    let newY = isDown ? (Math.random() * 70) - 30 : (Math.random() * 90) + 90; 
+    setNoPos({ x: newX, y: newY });
+  };
   
   // -- MODAL STATES --
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -494,109 +689,220 @@ export default function StudentSwotForm() {
           Target: <strong>{attemptLabel}</strong>
         </div>
         
-        {/* --- ROW 1: JSS --- */}
-        <div style={rowStyle}>
-           <div style={{ flex: "0 0 auto" }}>
-              <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
-           </div>
-           
-           <div style={boxStyle("#6a11cb", "#f8f9fa")}>
-             <h3 style={{ margin: "0 0 8px 0", color: "#6a11cb", fontSize: "20px" }}>JSS (JEEsociety Score)</h3>
-             <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
-               This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage. A low JSS means that you lack a good "system", even if your "Knowledge" is good.
-             </p>
-           </div>
-        </div>
-
-        {/* --- ROW 2: EP --- */}
-        <div style={rowStyle}>
-           <div style={{ flex: "0 0 auto" }}>
-             {/* 4. FIX: Use epValue here so the circle actually fills up */}
-             <CircularScore 
+        {/* --- ROW 1: EP (BIGGEST - Scale 1.25) --- */}
+        <div style={{ ...rowStyle, gap: "40px", marginBottom: "50px" }}>
+           <div style={{ flex: "0 0 auto", transform: "scale(1.25)", transformOrigin: "center", zIndex: 2 }}>
+             <CleanEPCircle 
                value={epValue}  
                color="#1db954" 
-               title="EP" 
+               title="Expected Percentile" 
                rangeText={`${expected_percentile_range[0]} - ${expected_percentile_range[1]}%`} 
              />
            </div>
 
-           <div style={boxStyle("#1db954", "#f0fff4")}>
-             <h3 style={{ margin: "0 0 8px 0", color: "#1db954", fontSize: "20px" }}>EP (Expected Percentile)</h3>
-             <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
-               If you continue <b>exactly</b> as you are today—without changing your habits—this is where you will land. This is the "Truth Mirror". It factors in your current leaks (distractions, weak revision) to predict your realistic outcome.
+           <div style={{ 
+             ...boxStyle("#1db954", "#e8fdf0"), 
+             padding: "25px 30px", 
+             borderLeft: "8px solid #1db954",
+             boxShadow: "0 10px 30px rgba(29, 185, 84, 0.25)",
+             position: "relative"
+           }}>
+             <h3 style={{ margin: "0 0 10px 0", color: "#1db954", fontSize: "24px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                 Expected Percentile
+             </h3>
+             <p style={{ margin: 0, fontSize: "17px", color: "#222", lineHeight: "1.7" }}>
+               If you continue <b>exactly</b> as you are today - without changing your habits - this is where you will land.
              </p>
            </div>
         </div>
 
-        {/* --- ROW 3: PP --- */}
+<p style={storyTextStyle}>
+          This is the future your current daily habits are quietly building.
+        </p>
+
+        {/* --- ROW 2: JSS (MEDIUM - Scale 1.12) --- */}
+        <div style={{ ...rowStyle, gap: "35px", marginTop: "44px", marginBottom: "45px" }}>
+           <div style={{ flex: "0 0 auto", transform: "scale(1.12)", transformOrigin: "center", zIndex: 1 }}>
+              <CircularScore value={jee_society_score} color="#6a11cb" title="JSS" rangeText={jee_society_score} />
+           </div>
+           
+           <div style={{ 
+             ...boxStyle("#6a11cb", "#f8f9fa"), 
+             padding: "22px 25px", 
+             borderLeft: "7px solid #6a11cb" 
+           }}>
+             <h3 style={{ margin: "0 0 8px 0", color: "#6a11cb", fontSize: "22px" }}>JSS (JEEsociety Score)</h3>
+             <p style={{ margin: 0, fontSize: "15px", color: "#333", lineHeight: "1.65" }}>
+               This is your <b>Holistic Preparation Index</b>. Unlike a mock test that only checks knowledge, JSS accounts for your Consistency, Focus, Revision Quality, and Syllabus Coverage.
+             </p>
+           </div>
+        </div>
+
+<div>
+            <h2 style={bigButStyle}>BUT...</h2>
+            <p style={storyTextStyle}>
+             If you fix the specific leaks in your preparation and secure the right guidance, this entire trajectory can shift upwards dramatically.
+            </p>
+        </div>
+
+        {/* --- ROW 3: PP (STANDARD - No Scale) --- */}
         <div style={rowStyle}>
            <div style={{ flex: "0 0 auto" }}>
-             {/* 5. FIX: Use ppValue here */}
-             <CircularScore 
+             <GoldenPPCircle 
                value={ppValue}  
                color="#ff7a00" 
-               title="PP" 
+               title="Potential Percentile"
                rangeText={`${potential_percentile_range[0]} - ${potential_percentile_range[1]}%`} 
              />
            </div>
 
            <div style={boxStyle("#ff7a00", "#fff8e6")}>
-             <h3 style={{ margin: "0 0 8px 0", color: "#ff7a00", fontSize: "20px" }}>PP (Potential Percentile)</h3>
+             <h3 style={{ margin: "0 0 8px 0", color: "#ff7a00", fontSize: "20px" }}>Potential Percentile</h3>
              <p style={{ margin: 0, fontSize: "15px", color: "#444", lineHeight: "1.6" }}>
-               This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately. The gap between your EP and PP is your "Lost Potential".
+               This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately.
              </p>
            </div>
         </div>
+
+<p style={{ margin: "20px 0", fontSize: "19px", color: "#333", fontFamily: "Georgia", lineHeight: "1.7" }}>
+          The gap between your Expected Percentile and Potential Percentile is your <b>"Lost Potential"</b>.
+        </p>
 
         {/* --- SWOT SECTION --- */}
         <h2 style={{ marginTop: "50px" }}>Your Strength & Weakness</h2>
         <div className="swot-box strength"><b>Strength:</b> {finalSWOT.S}</div>
         <div className="swot-box weakness"><b>Weakness:</b> {finalSWOT.W}</div>
 
-        {/* --- BUTTONS --- */}
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginTop: "40px", flexWrap: "wrap" }}>
-          <button
-            onClick={() => setShowEmailModal(true)}
-            style={{
-              padding: "12px 24px", borderRadius: "12px",
-              background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
-              color: "white", fontSize: "16px", border: "none",
-              cursor: "pointer", transition: "0.2s ease",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-            }}
-          >
-            Download Full Report
-          </button>
+        {/* --- DYNAMIC DECISION SECTION --- */}
+        <div style={{ marginTop: "60px", minHeight: "150px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          
+          {!showFinalButtons ? (
+            /* PHASE 1: The Gamified Question */
+            <div style={{ position: "relative", width: "100%", textAlign: "center" }}>
+              <h3 style={{ fontSize: "24px", fontWeight: "800", color: "#0f172a", marginBottom: "25px" }}>
+                Do you want to improve your score?
+              </h3>
+              
+              <div style={{ display: "flex", justifyContent: "center", gap: "20px", alignItems: "center", flexWrap: "wrap", position: "relative", minHeight: "60px" }}>
+                
+                {/* The "YES" Button */}
+                <button
+                  onClick={() => setShowFinalButtons(true)}
+                  style={{
+                    padding: "14px 32px", borderRadius: "12px",
+                    background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+                    color: "white", fontSize: "18px", fontWeight: "bold", border: "none",
+                    cursor: "pointer", transition: "0.2s ease",
+                    boxShadow: "0 8px 20px rgba(124, 58, 237, 0.35)",
+                    zIndex: 10
+                  }}
+                  onMouseEnter={(e) => { e.target.style.transform = "scale(1.05)"; }}
+                  onMouseLeave={(e) => { e.target.style.transform = "scale(1)"; }}
+                >
+                  Yes, I want to improve
+                </button>
 
-          <button
-            onClick={() => window.open("/sample-report.pdf", "_blank")}
-            style={{
-              padding: "12px 24px", borderRadius: "12px",
-              background: "#1e90ff", color: "white", fontSize: "16px",
-              border: "none", cursor: "pointer", transition: "0.2s ease",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 6px 16px rgba(0,0,0,0.25)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-            }}
-          >
-            View Sample Report
-          </button>
+                {/* THE GHOST SPOT (Where the button used to be) */}
+                <div style={{ width: "220px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  {noCount === 0 ? (
+                    /* Initial state: The button sits normally here */
+                    <button
+                      onClick={moveNoButton} 
+                      style={{
+                        padding: "14px 24px", borderRadius: "12px",
+                        background: "#f1f5f9", color: "#64748b", 
+                        fontSize: "16px", fontWeight: "600", border: "1px solid #cbd5e1",
+                        cursor: "pointer", whiteSpace: "nowrap"
+                      }}
+                    >
+                      No, I don't want to improve
+                    </button>
+                  ) : (
+                    /* After click: Show the mocking texts here instead! */
+                    <span style={{ 
+                      color: "#ef4444", fontWeight: "bold", fontStyle: "italic", 
+                      animation: "fadeIn 0.3s ease" 
+                    }}>
+                      {placeholderTexts[Math.min(noCount - 1, placeholderTexts.length - 1)]}
+                    </span>
+                  )}
+                </div>
+
+                {/* THE MOVING BUTTON (Only exists after the first click) */}
+                {noCount > 0 && (
+                  <button
+                    onClick={moveNoButton} /* Only triggers on click now! */
+                    style={{
+                      padding: "14px 24px", borderRadius: "12px",
+                      background: "#f1f5f9", color: "#64748b", 
+                      fontSize: "16px", fontWeight: "600", border: "1px solid #cbd5e1",
+                      cursor: "pointer", whiteSpace: "nowrap",
+                      transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                      position: "absolute",
+                      transform: `translate(${noPos.x}px, ${noPos.y}px)`,
+                      zIndex: 50
+                    }}
+                  >
+                    No, I don't want to improve
+                  </button>
+                )}
+
+              </div>
+            </div>
+          ) : (
+            /* PHASE 2: The Original Action Buttons (Revealed after clicking Yes) */
+            <div style={{ animation: "slideUp 0.5s ease" }}>
+              <h3 style={{ 
+  fontFamily: "'Poppins', 'Inter', system-ui, -apple-system, sans-serif", /* ✅ The premium tech font stack */
+  fontSize: "26px", /* Bumped up slightly for more impact */
+  fontWeight: "800", 
+  letterSpacing: "-0.5px", /* ✅ Tight tracking makes it look modern and sleek */
+  marginBottom: "30px",
+  background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+  color: "transparent", 
+  textShadow: "0px 4px 15px rgba(124, 58, 237, 0.15)",
+  lineHeight: "1.3"
+}}>
+  Great choice! Here are your reports:
+</h3>
+              <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
+                
+                <button
+                  onClick={() => setShowEmailModal(true)}
+                  style={{
+                    padding: "12px 24px", borderRadius: "12px",
+                    background: "linear-gradient(90deg, #4b6bff, #7b2fff)",
+                    color: "white", fontSize: "16px", border: "none",
+                    cursor: "pointer", transition: "0.2s ease",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                  onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                >
+                  Download Full Report
+                </button>
+
+                <button
+                  onClick={() => window.open("/sample-report.pdf", "_blank")}
+                  style={{
+                    padding: "12px 24px", borderRadius: "12px",
+                    background: "#1e90ff", color: "white", fontSize: "16px",
+                    border: "none", cursor: "pointer", transition: "0.2s ease",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                  }}
+                  onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
+                  onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                >
+                  View Sample Report
+                </button>
+
+              </div>
+            </div>
+          )}
         </div>
-
         {/* --- YOUTUBE BUTTON --- */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <a 
@@ -831,9 +1137,11 @@ export default function StudentSwotForm() {
           )}
 
           {/* ✅ ADDED: Disclaimer Text (Task 1) */}
-          <p style={{ fontSize: "12px", color: "#888", marginTop: "15px", textAlign: "center", fontStyle: "italic" }}>
-            If no option feels 100% correct, choose the closest one — the model is designed to adjust for that.
-          </p>
+          {q.id !== "name" && (
+            <p style={{ fontSize: "12px", color: "#888", marginTop: "15px", textAlign: "center", fontStyle: "italic" }}>
+              If more than one  option feels 100% correct, choose the closest one - the model is designed to adjust for that.
+            </p>
+          )}
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "35px", gap: "16px" }}>
             {step > 0 && (
               <button
