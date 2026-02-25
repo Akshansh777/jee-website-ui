@@ -738,12 +738,7 @@ export default function StudentSwotForm() {
            </div>
         </div>
 
-<div>
-            <h2 style={bigButStyle}>BUT...</h2>
-            <p style={storyTextStyle}>
-             If you fix the specific leaks in your preparation and secure the right guidance, this entire trajectory can shift upwards dramatically.
-            </p>
-        </div>
+
 
         {/* --- ROW 3: PP (STANDARD - No Scale) --- */}
         <div style={rowStyle}>
@@ -764,8 +759,15 @@ export default function StudentSwotForm() {
            </div>
         </div>
 
+<div>
+            <h2 style={bigButStyle}>BUT...</h2>
+            <p style={storyTextStyle}>
+             This Performance Gap is driven by specific factors in your preparation, all within your control.
+            </p>
+        </div>
+
 <p style={{ margin: "20px 0", fontSize: "19px", color: "#333", fontFamily: "Georgia", lineHeight: "1.7" }}>
-          The gap between your Expected Percentile and Potential Percentile is your <b>"Lost Potential"</b>.
+          The gap between your Expected Percentile and Potential Percentile defines your <b>Performance Gap</b>.
         </p>
 
         {/* --- SWOT SECTION --- */}
