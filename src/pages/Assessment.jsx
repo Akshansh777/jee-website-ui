@@ -231,8 +231,8 @@ const QUESTIONS = [
     id: "q17",
     question: "Q17. Which attempt are you targeting? (Time Horizon)",
     options: [
-      "April Attempt 2026",
-      "JEE 2027"
+      "JEE 2027",
+      "JEE 2028"
     ],
     weights: [0, 0] 
   },
@@ -757,13 +757,6 @@ export default function StudentSwotForm() {
                This is your <b>Ceiling</b>. It calculates what you are capable of if you fix your identified "Weakness" and "Threats" immediately.
              </p>
            </div>
-        </div>
-
-<div>
-            <h2 style={bigButStyle}>BUT...</h2>
-            <p style={storyTextStyle}>
-             This Performance Gap is driven by specific factors in your preparation, all within your control.
-            </p>
         </div>
 
 <p style={{ margin: "20px 0", fontSize: "19px", color: "#333", fontFamily: "Georgia", lineHeight: "1.7" }}>
