@@ -16,23 +16,32 @@ const sampleData = {
   },
 
   manifestKeys: {
+    // earlier sections
+    q4: "Q4_D",
+    q5: "Q5_C",
+    q6: "Q6_D",
 
-    q4: "Q4_D",   // Comfort Trap
-    q5: "Q5_C",   // Weak Chemistry
-    q6: "Q6_D",   // Ego Lifter
+    q7: "Q7_D",
+    q8: "Q8_C",
+    q9: "Q9_C",
+    q10: "Q10_D",
+    q11: "Q11_B",
+    q12: "Q12_C",
 
-    q7: "Q7_D",   // Blank Out
-    q8: "Q8_C",   // Slow Solver
-    q10: "Q10_D", // Fear Skipping
-    q11: "Q11_B", // Fear
-    q12: "Q12_C", // Doubter
-    q9: "Q9_C",   // Reels Brain
-    q13: "Q13_D", // Night Owl
-    q14: "Q14_B", // Frequent Illness
-    q15: "Q15_D", // Chaos
-    q16: "Q16_B", // Pressure Cooker
-    q17: "Q17_C", // Marathon
-    q18: "Q18_D"  // High Risk
+    // health page
+    q13: "Q13_D",
+    q14: "Q14_B",
+    q15: "Q15_D",
+    q16: "Q16_B",
+
+    // ✅ EXECUTION PLAN (FULL 7 KEYS)
+    q17: "Q17_C",
+    q18: "Q18_D",
+    q19: "Q19_A",
+    q20: "Q20_B",
+    q21: "Q21_C",
+    q22: "Q22_A",
+    q23: "Q23_B"
   }
 };
 

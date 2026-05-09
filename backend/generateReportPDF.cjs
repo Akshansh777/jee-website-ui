@@ -39,6 +39,12 @@ function collectActions(keys, data) {
   return actions.slice(0, 7);
 }
 
+function generateReportId(data) {
+  const namePart = (data.name || "USR").slice(0, 3).toUpperCase();
+  const timePart = Date.now().toString().slice(-6);
+  return `JS-${namePart}-${timePart}`;
+}
+
 function distortMindset(raw) {
   const base = Math.floor(raw * 0.7);
   const noise = Math.floor(Math.random() * 14) - 8;
@@ -50,16 +56,31 @@ async function generatePDF(data) {
 
   const attemptType = data.target_attempt && data.target_attempt.includes("2027") ? "2027" : "2026";
 
-  const coverImg = imgToBase64(path.resolve(__dirname, "assets/cover.png"));
+ const coverNewImg = imgToBase64(
+  path.resolve(__dirname, "assets/cover_new.png")
+);
   const founderImg = imgToBase64(path.resolve(__dirname, "assets/founder.png"));
-  const parentsImg = imgToBase64(path.resolve(__dirname, "assets/parents_note.png"));
+  
 
-  const mindsetImg = imgToBase64(path.resolve(__dirname, "assets/mindset.png"));
+  const mappingImg = loadImageSafe(
+  path.resolve(__dirname, "assets/mapping.png"),
+  path.resolve(__dirname, "assets/mapping.png")
+);
+
+const refMindsetImg = loadImageSafe(
+  path.resolve(__dirname, "assets/ref-mindset.png"),
+  path.resolve(__dirname, "assets/ref-mindset.png")
+);
+ 
   const calculatorImg = imgToBase64(path.resolve(__dirname, "assets/calculator.png"));
   const refBgImg = imgToBase64(
   path.resolve(__dirname, "assets/ref.png")
 );
 
+const subjectScoreBg = loadImageSafe(
+  path.resolve(__dirname, "assets/subject-wise-score.png"),
+  path.resolve(__dirname, "assets/subject-wise-score.png")
+);
 
  function safeImg(name) {
   const p = path.resolve(__dirname, `assets/${name}`);
@@ -104,16 +125,37 @@ const mathsImg = loadImageSafe(
 
 
 
-  const conclusionBgImg = imgToBase64(
-  path.resolve(__dirname, "assets/conclusion.png")
+const conclusionNewBg = imgToBase64(
+  path.resolve(__dirname, "assets/conclusion_new.png")
 );
 
-  const executionBgImg = imgToBase64(
-  path.resolve(__dirname, "assets/execution.png")
+const execBgImg = imgToBase64(
+  path.resolve(__dirname, "assets/execution_plan.png")
 );
+
+const noteParentsBg = imgToBase64(
+  path.resolve(__dirname, "assets/note-parents.png")
+);
+
+const roadmapBg = imgToBase64(
+  path.resolve(__dirname, "assets/roadmap.png")
+);
+
+
+const template1Img = loadImageSafe(
+  path.resolve(__dirname, "assets/templates/template1.png"),
+  path.resolve(__dirname, "assets/templates/template1.png") // fallback same for now
+);
+
+const template2Img = loadImageSafe(
+  path.resolve(__dirname, "assets/templates/template2.png"),
+  path.resolve(__dirname, "assets/templates/template2.png")
+);
+
+
   // ✅ FIX: define health background image
   const healthEnvBgImg = imgToBase64(
-  path.resolve(__dirname, "assets/health_env.png")
+  path.resolve(__dirname, "assets/health_env_new.png")
 );
 
 
@@ -147,22 +189,36 @@ body { margin:0; padding:0; background:white; font-family:Nunito,sans-serif; }
 .page:last-child {
   page-break-after: auto;
 }
-
+.full-page-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 img { width:100%; display:block; }
 
 /* COVER */
-.cover-page { font-family:Lato; position:relative; }
+.cover-text {
+  position: absolute;
+  font-size: 20px;
+  color: #222;
+  font-weight: 500;
+}
 
-.cover-info {
-  position:absolute;
-  bottom:110px;
-  left:70px;
-  width:380px;
-  background:#4a0402;
-  color:#FFF1CD;
-  padding:18px 22px;
-  border-radius:12px;
+/* ALIGN INSIDE BOX */
+
+.name   { top: 66%; left: 24%; }
+.target { top: 69%; left: 24%; }
+
+.exp    { top: 72%; left: 46%; }
+.pot    { top: 76%; left: 46%; }
+
+.score  { top: 80%; left: 42%; }
+
+.report {
+  top: 86%;
+  left: 30%;
+  font-size: 14px;
 }
 
 /* FOUNDER */
@@ -192,53 +248,62 @@ img { width:100%; display:block; }
 }
 
 /* PCM */
-.pcm-header {
-  background:#4a0402;
-  color:#EAA702;
-  text-align:center;
-  padding:20px 0;
-  font-size:26px;
-  font-weight:800;
-  margin-bottom:25px;
-}
-
-.strategy-box {
-  background:#f2f2f2;
-  border-radius:10px;
-  padding:18px;
-  margin-bottom:18px;
-  break-inside:avoid;
-}
-
-.strategy-number {
-  width:55px;
-  height:55px;
-  background:#4a0402;
-  color:#EAA702;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  font-weight:800;
-  margin:0 auto 10px;
-}
-
-.strategy-title {
-  text-align:center;
-  font-weight:800;
-  margin-bottom:8px;
-}
-
-/* REF PAGE */
-.ref-page {
+.subject-page {
   position: relative;
-  padding: 0;
-  height: 1120px; /* A4 */
+  height: 1120px;
+}
+
+.subject-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.subject-box {
+  position: absolute;
+  font-size: 14.5px;
+  line-height: 1.7;
+  max-width: 38ch;
   overflow: hidden;
 }
 
-/* background png */
+.physics-box {
+  top: 380px;
+  left: 110px;
+}
+
+.chemistry-box {
+  top: 380px;
+  left: 500px;
+  max-width: 42ch;
+}
+
+.maths-box {
+  top: 820px;
+  left: 110px;
+  max-width: 40ch;
+}
+.subject-box {
+  max-width: 38ch;
+}
+
+.subject-container {
+  position: relative;
+  left: -55px;   /* 👈 shift everything left */
+}
+
+/* REF PAGE */
+/* ===== REF PAGE ===== */
+
+.ref-page {
+  position: relative;
+  height: 1120px;
+}
+
+/* background image */
 .ref-bg {
   position: absolute;
   top: 0;
@@ -246,198 +311,174 @@ img { width:100%; display:block; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
 }
 
-/* top grey box text */
-.ref-box1 {
+/* ===== TOP BOX ===== */
+.ref-text {
   position: absolute;
-  top: 310px;
-  left: 80px;
-  width: 620px;
-  padding: 20px;
+
+  top: 250px;        /* 🔥 move UP (was ~360) */
+  left: 50px;
+
+  width: 640px;      /* slightly wider → better fill */
+  height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 20px 30px;
+
   font-size: 15px;
-  line-height: 1.6;
-  color: #4a0402;
-  z-index: 5;
+  line-height: 1.8;
+  color: #4b1e1e;
 }
 
-/* bottom grey box text */
+/* ===== BOTTOM BOX ===== */
 .ref-bottom-text {
   position: absolute;
 
-  /* adjust these to match your grey box location */
-  top: 780px;      /* pushes it into grey box */
-  left: 75px;
+  top: 750px;        /* 🔥 move UP (was ~780+) */
+  left: 85px;
 
-  width: 350px;    /* keeps lines short */
-  max-width: 350px;
+  width: 600px;
+  height: 240px;     /* slightly tighter → removes emptiness */
 
-  font-size: 15px;
-  line-height: 1.6;
-  color: #4a0402;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
-  z-index: 10;
+  padding: 20px 30px;
 
-  text-align: left;
-  word-wrap: break-word;
+  font-size: 19px;
+  line-height: 1.8;
+  color: #4b1e1e;
 }
-
-
-.ref-bottom-text p {
-  margin: 0 0 14px 0;   /* space between paragraphs */
-}
-
 
 
 
 /* HEALTH PAGE */
-.health-page { position: relative; padding:0; }
+.health-page {
+  position: relative;
+  height: 1120px;
+  font-family: 'DM Sans', sans-serif;
+}
 
 .health-bg {
-  width:100%;
-  height:100%;
-  object-fit:cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.health-title {
+.health-container {
   position: absolute;
-  top: 90px;
-  left: 80px;
-  width: 600px;
-
-  background: #E5E9EF;
-  border: 2px solid #4a0402;
-  border-radius: 6px;
-
-  padding: 16px 20px;
-
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.5px;
+  top: 160px;
+  left: 90px;
+  right: 90px;
 }
 
-
-.health-box {
+.health-item {
   position: absolute;
-  left: 80px;
-  width: 600px;
 
-  background: #E5E9EF;          /* solid grey */
-  border: 2px solid #4a0402;
-  border-radius: 6px;
-
-  padding: 22px 24px;          /* more inner space */
-  min-height: 90px;            /* makes boxes taller */
+  width: 620px;        /* slightly tighter so it fits curves */
+  left: 5px;         /* ← move LEFT (was ~180) */
 
   font-size: 16px;
   line-height: 1.6;
-  color: #4a0402;
+  color: #5c1a1a;
+
+  display: flex;
+  align-items: center;
+
+  height: 110px;       /* slightly tighter fit */
 }
 
+.health-item:nth-of-type(1) { top: 20px; }
+.health-item:nth-of-type(2) { top: 230px; }
+.health-item:nth-of-type(3) { top: 450px; }
+.health-item:nth-of-type(4) { top: 650px; }
 
-.box1 { top: 170px; }
-.box2 { top: 300px; }
-.box3 { top: 430px; }
-.box4 { top: 560px; }
-
-.execution-page {
+/* EXECUTION PAGE */
+./* EXECUTION PAGE */
+.exec-page {
   position: relative;
-  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.execution-bg {
+/* BACKGROUND */
+.exec-bg {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* execution title bar */
-.execution-title {
+/* TEXT ITEMS */
+.exec-item {
   position: absolute;
-  top: 120px;
-  left: 80px;
-  width: 600px;
-
-  background: #4a0402;
-  color: #EAA702;
-
-  padding: 14px;
-  font-size: 26px;
-  font-weight: 800;
-  text-align: center;
-  letter-spacing: 2px;
-}
-.execution-box li {
-  margin-bottom: 14px;   /* controls spacing between points */
-  line-height: 1.6;
-}
-/* execution grey box */
-.execution-box {
-  position: absolute;
-  top: 240px;
-  left: 80px;
-  width: 600px;
-
-  background: #C6C6C6;
-  border-radius: 14px;
-
-  padding: 30px 35px;
+  width: 420px;        /* reduced width so it sits inside layout and aligns with numbers */
+  left: 140px;         /* moved left to align with numbering on the background */
 
   font-size: 18px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: #4a0402;
-  font-weight: 600;
+  padding: 10px 14px;  /* add padding for better visual spacing */
+  box-sizing: border-box;
+  border-radius: 6px;
 }
-.conclusion-page {
-  position: relative;
-  padding: 0;
-  height: 1120px; /* A4 */
+
+.exec-item.item1 { top: 300px; }
+.exec-item.item2 { top: 360px; }
+.exec-item.item3 { top: 420px; }
+.exec-item.item4 { top: 480px; }
+.exec-item.item5 { top: 540px; }
+.exec-item.item6 { top: 600px; }
+.exec-item.item7 { top: 660px; }
+
+.exec-item {
+  max-height: 60px;
   overflow: hidden;
 }
 
-/* background image */
-.conclusion-bg {
+.exec-item {
+  background: rgba(255,0,0,0.2);
+}
+
+
+.conclusion-new-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.conclusion-new-bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* text layer */
-.conclusion-content {
+/* TEXT BOX */
+.conclusion-text {
   position: absolute;
-  top: 560px;   /* push below title bar in PNG */
-  left: 80px;
-  right: 80px;
-  z-index: 5;
-  font-family: 'Nunito', sans-serif;
-  color: #4a0402;
+  top: 390px;
+  left: 140px;
+
+  width: 520px;          /* ↓ reduced width */
+
+  font-size: 25px !important;       /* ↑ bigger text */
+  line-height: 1.8;      /* ↑ better readability */
+
+  color: #5c1a1a;
 }
 
-/* each block */
-.conclusion-item {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 30px;
+.conclusion-text p {
+  margin-bottom: 27px;   /* controls gap between lines */
 }
 
-.conclusion-item .num {
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.conclusion-item h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.conclusion-item p {
-  margin-top: 6px;
-  font-size: 15px;
-  line-height: 1.6;
-}
 
 
 /* title */
@@ -453,24 +494,29 @@ img { width:100%; display:block; }
   line-height: 1.5;
 }
 
+/* template */
+.full-page-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 </style>
 </head>
 
 <body>
 
-<!-- PAGE 1 COVER -->
-<div class="page cover-page">
-  <img src="${coverImg}">
-  <div class="cover-info">
-    <strong>Name:</strong> ${data.name}<br>
-    <strong>Target:</strong> ${data.target_attempt || "JEE Main"}<br>
-    <strong>JEE Society Score:</strong> ${data.jee_society_score}<br>
-    <strong>Expected Percentile:</strong> 
-    ${Array.isArray(data.expected_percentile) 
-       ? data.expected_percentile.join("% - ") + "%" 
-       : data.expected_percentile || "Calculating..."}
-  </div>
+<!-- PAGE: COVER NEW -->
+<div class="page cover-new-page">
+  <img src="${coverNewImg}" class="cover-new-bg"/>
+
+  <div class="cover-text name">${data.name || ""}</div>
+  <div class="cover-text target">${data.attempt_type || ""}</div>
+  <div class="cover-text exp">${data.expected_percentile || ""}</div>
+  <div class="cover-text pot">${data.expected_percentile || ""}</div>
+  <div class="cover-text score">${data.jee_society_score || ""}</div>
+  <div class="cover-text report">${generateReportId(data)}</div>
+
 </div>
 
 <!-- PAGE 2 FOUNDER -->
@@ -489,21 +535,37 @@ img { width:100%; display:block; }
   </div>
 </div>
 
-<!-- PAGE 3 PCM -->
+<!-- PAGE: SUBJECT SCORE -->
 
+<div class="page subject-page">
 
-<div class="page">
-  <div class="pcm-header">PCM STRATEGY ANALYZER</div>
-  <div class="strategy-box"><div class="strategy-number">1</div><div class="strategy-title">PHYSICS STRATEGY</div>${get("q4", data)?.mentor_note || ""}</div>
-  <div class="strategy-box"><div class="strategy-number">2</div><div class="strategy-title">CHEMISTRY STRATEGY</div>${get("q5", data)?.mentor_note || ""}</div>
-  <div class="strategy-box"><div class="strategy-number">3</div><div class="strategy-title">MATHS STRATEGY</div>${get("q6", data)?.mentor_note || ""}</div>
+  <img src="${subjectScoreBg}" class="subject-bg"/>
+
+  <div class="subject-container">   <!-- ADD THIS -->
+
+    <div class="subject-box physics-box">
+      ${get("q4", data)?.mentor_note || ""}
+    </div>
+
+    <div class="subject-box chemistry-box">
+      ${get("q5", data)?.mentor_note || ""}
+    </div>
+
+    <div class="subject-box maths-box">
+      ${get("q6", data)?.mentor_note || ""}
+    </div>
+
+  </div>  <!-- END -->
+
 </div>
 
+${mappingImg ? `<div class="page">
+  <img src="${mappingImg}" class="full-page-img"/>
+</div>` : ""}
 <!-- PAGE: REF ANALYSIS -->
 
-
 <div class="page ref-page">
-  <img src="${refBgImg}" class="ref-bg"/>
+  <img src="${refMindsetImg}" class="ref-bg"/>
 
   <!-- R.E.F ANALYSIS TEXT (top grey box) -->
   <div class="ref-text ref-box1">
@@ -511,17 +573,16 @@ img { width:100%; display:block; }
   </div>
 
   <!-- BIGGEST BARRIER & MINDSET (bottom grey box) -->
-<div class="ref-bottom-text">
+  <div class="ref-bottom-text">
   <p>
-    ${(get("q11", data)?.mentor_note?.split(". ") || []).slice(0,1).join(". ")}
+    ${(get("q11", data)?.mentor_note?.split(". ") || []).slice(0,2).join(". ")}
   </p>
   <p>
-    ${(get("q11", data)?.mentor_note?.split(". ") || []).slice(1).join(". ")}
+    ${(get("q11", data)?.mentor_note?.split(". ") || []).slice(2).join(". ")}
   </p>
 </div>
+
 </div>
-
-
 
 <!-- PAGE: Health Energy Environment -->
 <div class="page health-page">
@@ -529,30 +590,28 @@ img { width:100%; display:block; }
   <!-- background image -->
   <img src="${healthEnvBgImg}" class="health-bg"/>
 
-  <!-- HEADING -->
-  <div class="health-title">
-    Health • Energy • Environment
-  </div>
+  <!-- CONTENT WRAPPER -->
+  <div class="health-container">
 
-  <!-- BOX 1 -->
-  <div class="health-box box1">
-    ${get("q13", data)?.mentor_note || ""}
-  </div>
+    <!-- ITEMS -->
+    <div class="health-item">
+      ${get("q13", data)?.mentor_note || ""}
+    </div>
 
-  <!-- BOX 2 -->
-  <div class="health-box box2">
-    ${get("q14", data)?.mentor_note || ""}
-  </div>
+    <div class="health-item">
+      ${get("q14", data)?.mentor_note || ""}
+    </div>
 
-  <!-- BOX 3 -->
-  <div class="health-box box3">
-    ${get("q15", data)?.mentor_note || ""}
-  </div>
+    <div class="health-item">
+      ${get("q15", data)?.mentor_note || ""}
+    </div>
 
-  <!-- BOX 4 -->
-  <div class="health-box box4">
-    ${get("q16", data)?.mentor_note || ""}
+    <div class="health-item">
+      ${get("q16", data)?.mentor_note || ""}
+    </div>
+
   </div>
+</div>
 
 
 </div>
@@ -562,74 +621,56 @@ img { width:100%; display:block; }
 ${physicsImg ? `<div class="page"><img src="${physicsImg}"></div>` : ""}
 ${chemistryImg ? `<div class="page"><img src="${chemistryImg}"></div>` : ""}
 ${mathsImg ? `<div class="page"><img src="${mathsImg}"></div>` : ""}
-${parentsImg ? `<div class="page"><img src="${parentsImg}"></div>` : ""}
 
 
 
-// <!-- MINDSET 
-<div class="page">
-<h2>Mindset Readiness</h2>
-<p>${uglyMindset}/100</p>
-<div style="background:#EAA702;height:16px;width:${uglyMindset}%"></div>
-</div>
--->
 
 <!-- PAGE: EXECUTION PLAN -->
-<div class="page execution-page">
+<div class="page exec-page">
+  <img src="${execBgImg}" class="exec-bg"/>
 
-  <!-- background image -->
-  <img src="${executionBgImg}" class="execution-bg"/>
-
-  <!-- title -->
-  <div class="execution-title">
-    EXECUTION PLAN
-  </div>
-
-  <!-- grey content box -->
-  <div class="execution-box">
-    <ol>
-      ${collectActions(["q7","q8","q10","q11","q12","q13","q14"], data)
-        .map(a => `<li>${a}</li>`).join("")}
-    </ol>
-  </div>
-
+  <div class="exec-item item1">${get("q17", data)?.mentor_note || "TEST 1"}</div>
+  <div class="exec-item item2">${get("q18", data)?.mentor_note || "TEST 2"}</div>
+  <div class="exec-item item3">${get("q19", data)?.mentor_note || "TEST 3"}</div>
+  <div class="exec-item item4">${get("q20", data)?.mentor_note || "TEST 4"}</div>
+  <div class="exec-item item5">${get("q21", data)?.mentor_note || "TEST 5"}</div>
+  <div class="exec-item item6">${get("q22", data)?.mentor_note || "TEST 6"}</div>
+  <div class="exec-item item7">${get("q23", data)?.mentor_note || "TEST 7"}</div>
 </div>
 
+<!-- PAGE: NOTE TO PARENTS -->
+<div class="page note-parents-page">
+  <img src="${noteParentsBg}" class="note-parents-bg"/>
+</div>
 
+<!-- PAGE: ROADMAP -->
+<div class="page roadmap-page">
+  <img src="${roadmapBg}" class="roadmap-bg"/>
+</div>
 
 <!-- PAGE Conclusion -->
-<!-- PAGE Conclusion -->
-<div class="page conclusion-page">
+<!-- PAGE: CONCLUSION NEW -->
+<div class="page conclusion-new-page">
+  <img src="${conclusionNewBg}" class="conclusion-new-bg"/>
 
-  <!-- background image -->
-  <img src="${conclusionBgImg}" class="conclusion-bg"/>
-
-  <!-- content -->
-  <div class="conclusion-content">
-
-    <div class="conclusion-item">
-      
-      <div class="conclusion-text">
-       
-        <div class="conclusion-body">
-          ${get("q17", data)?.mentor_note || ""}
-        </div>
-      </div>
-    </div>
-
-    <div class="conclusion-item">
-    
-      <div class="conclusion-text">
-        
-        <div class="conclusion-body">
-          ${get("q18", data)?.mentor_note || ""}
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <!-- TEXT OVERLAY -->
+ <div class="conclusion-text">
+  <p>${get("q17", data)?.mentor_note || ""}</p>
+  <p>${get("q18", data)?.mentor_note || ""}</p>
+</div>
 </div>
 
+
+
+<!-- PRINTABLE TEMPLATES (LAST PAGES) -->
+
+${template1Img ? `<div class="page">
+  <img src="${template1Img}" class="full-page-img"/>
+</div>` : ""}
+
+${template2Img ? `<div class="page">
+  <img src="${template2Img}" class="full-page-img"/>
+</div>` : ""}
 
 
 
