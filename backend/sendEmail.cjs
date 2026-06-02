@@ -7,11 +7,11 @@ async function sendReport(toEmail, pdfBuffer) {
   try {
     // 1. Convert the raw data to a standard Node.js Buffer
     const finalBuffer = Buffer.from(pdfBuffer);
-    console.log(`Preparing to send email. Attachment size: ${finalBuffer.length} bytes`);
-
+    console.log(">>>>>>>> I AM RUNNING THE NEW CODE <<<<<<<<");
+    
     // 2. Send the email with the buffer
     const data = await resend.emails.send({
-      from: "onboarding@resend.dev", // <--- THIS BYPASSES THE DOMAIN BLOCK
+      from: "onboarding@resend.dev",
       to: toEmail,
       subject: "Your JEEsociety Report",
       html: "<p>Here is your personalized SWOT analysis report from JEEsociety.</p>",

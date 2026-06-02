@@ -574,7 +574,6 @@ export default function StudentSwotForm() {
 
     setIsSending(true);
 
-    // 1. Calculate Scores & Destructure ALL required fields
     const result = computeScores(answers);
     const { 
       jee_society_score, 
@@ -582,20 +581,34 @@ export default function StudentSwotForm() {
       potential_percentile_range 
     } = result;
 
-    // 2. DYNAMIC ATTEMPT LABEL (Strict User Choice)
     const q17Obj = QUESTIONS.find(q => q.id === "q17");
     const attemptIndex = answers["q17"];
-    
-    // Safety check: if user didn't answer Q17, default to "2028" so the PDF logic works
-    const attemptLabel = (q17Obj && q17Obj.options[attemptIndex]) 
-        ? q17Obj.options[attemptIndex] 
-        : "2028"; 
+    const attemptLabel = (q17Obj && q17Obj.options[attemptIndex]) ? q17Obj.options[attemptIndex] : "2028"; 
 
-    // 3. SAFE PERCENTILE FALLBACKS
     const safeExpected = expected_percentile_range || [0, 0];
     const safePotential = potential_percentile_range || [0, 0];
 
-    // 4. Prepare the EXACT payload name that fetch will use
+    // ---------------------------------------------------------
+    // THE FIX: DYNAMIC MAPPING ALGORITHM
+    // Translates answers (e.g., q4: 1) into manifest keys (Q4_B)
+    // ---------------------------------------------------------
+    const optionMap = ["A", "B", "C", "D"];
+    const generatedManifestKeys = {};
+
+    Object.keys(answers).forEach((key) => {
+      // Check if the key is a question (q1, q2, etc.)
+      if (key.startsWith("q")) {
+        const answerIndex = Number(answers[key]);
+        if (!isNaN(answerIndex) && optionMap[answerIndex]) {
+          // Converts "q4" + 1 -> "Q4_B"
+          generatedManifestKeys[key] = `${key.toUpperCase()}_${optionMap[answerIndex]}`;
+        }
+      }
+    });
+
+    // ... inside handleSendReport
+
+    // Prepare payload
     const reportPayload = {
       email: email,
       name: answers["name"] || "Future IITian",
@@ -615,36 +628,19 @@ export default function StudentSwotForm() {
       },
       recommendations: "Focus on your flagged weaknesses. Use the Opportunity areas to gain extra marks.",
 
-      // THIS IS CRITICAL FOR THE PDF GENERATOR TO PRINT TEXT!
-      // Replace these strings with your actual dynamic logic later
-      dynamicText: {
-        q4: "Physics: You are falling into the 'PhD Trap'. Force yourself to face Chemistry/Math.",
-        q5: "Chemistry: Good theory but weak inorganic. Start doing PYQs.",
-        q6: "Maths: Weak conceptual clarity. Try scribbling and making mistakes.",
-        q7: "Recall: You forget details after 2 days. Use active recall.",
-        q8: "Efficiency: 8-10 questions/hr is too slow.",
-        q10: "Focus: Blanking out is an emotional issue. Normalise the pressure.",
-        q11: "Barrier: You are scared of getting low marks, so you don't take tests.",
-        q13: "Health: Sleep deprived. Need 7 hours of sleep.",
-        q14: "Energy: Low-moderate. Need 20 mins physical activity.",
-        q15: "Environment: Crowded and noisy.",
-        q16: "Parents: Supportive but not structured.",
-        q17: "Step 1: Cap Physics time to 1.5 hours daily.",
-        q18: "Step 2: Start a live error log tonight.",
-        q19: "Step 3: Run one 3-hour mock test this Sunday.",
-        q20: "Step 4: Do 30 mins of inorganic active recall daily.",
-        q21: "Step 5: Clean your study desk—no phones allowed.",
-        q22: "Step 6: Clear backlogs by Friday.",
-        q23: "Step 7: Sleep by 11:30 PM strictly."
-      }
+      // Send the mapped keys so the backend knows EXACTLY which JSON blocks to pull
+      manifestKeys: generatedManifestKeys
+      
+      // NOTICE: We completely deleted the 'dynamicText' object from here!
+      // Now it won't block q18 from pulling the real Verdict.
     };
 
     try {
-      // 5. Fetch using the matching variable name
       const response = await fetch("http://localhost:3000/send-dynamic-report", {
+// ...
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(reportPayload) // Now this perfectly matches line 28!
+        body: JSON.stringify(reportPayload) 
       });
       
       const data = await response.json();
@@ -659,7 +655,7 @@ export default function StudentSwotForm() {
     } finally {
       setIsSending(false);
     }
-};
+  };
 
 
 

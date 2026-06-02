@@ -84,7 +84,32 @@ async function generatePDF(data) {
     args: ["--no-sandbox", "--disable-setuid-sandbox"]
   });
   const page = await browser.newPage();
+// --- 1. BUILD CUSTOM EXECUTION PLAN (7 Steps) ---
+  // We extract the "action_24h" and "action_7d" items from the student's most critical answers
+  const customSteps = [];
+  
+  // We prioritize pulling action steps from their biggest barriers, errors, and deep work habits first
+  const priorityKeys = ["q11", "q10", "q2", "q3", "q4", "q1", "q9"];
 
+  for (let key of priorityKeys) {
+    const code = data.manifestKeys?.[key];
+    if (code && solutionManifest[code] && solutionManifest[code].action_24h) {
+      customSteps.push(solutionManifest[code].action_24h);
+    }
+  }
+  
+  // If we still need more steps to reach exactly 7, we add their 7-day actions
+  if (customSteps.length < 7) {
+    for (let key of priorityKeys) {
+      const code = data.manifestKeys?.[key];
+      if (code && solutionManifest[code] && solutionManifest[code].action_7d) {
+        customSteps.push(solutionManifest[code].action_7d);
+      }
+    }
+  }
+  
+  // Pad with blanks just in case a user skipped questions
+  while (customSteps.length < 7) { customSteps.push("Stay consistent and review your error log daily."); }
   const html = `
 <!DOCTYPE html>
 <html>
@@ -174,7 +199,7 @@ body { margin:0; padding:0; background:white; font-family:'Nunito', sans-serif; 
 .p5-score-top { top: 164px; left: 466px; font-size: 22px; color: #a40000; }
 
 /* PAGE 6: R.E.F & BARRIER */
-.p6-ref     { top: 260px; left: 90px; width: 610px; line-height: 1.7; color: #4a0402; }
+.p6-ref     { top: 230px; left: 90px; width: 610px; line-height: 1.7; color: #4a0402; }
 .p6-barrier { top: 780px; left: 90px; width: 610px; line-height: 1.7; color: #4a0402; }
 
 /* PAGE 7: HEALTH (Splitting them into their respective bubbles) */
@@ -185,7 +210,7 @@ body { margin:0; padding:0; background:white; font-family:'Nunito', sans-serif; 
 .h-item4 { top: 835px; }
 
 /* PAGE 8: EXECUTION PLAN */
-.exec-item { position: absolute; left: 140px; width: 530px; font-size: 25px; line-height: 1.5; color: #4a0402; font-weight: 700; }
+.exec-item { position: absolute; left: 140px; width: 550px; font-size: 15px; line-height: 1.5; color: #4a0402; font-weight: 600; }
 .ex1 { top: 292px; }
 .ex2 { top: 405px; }
 .ex3 { top: 518px; }
@@ -309,18 +334,21 @@ ${attemptType === "2028" ? `
   </div>
 </div>
 
+<!-- PAGE 8: EXECUTION PLAN (Updated) -->
 <div class="page">
   <img src="${images.p8}" class="bg-img" onerror="this.style.display='none'"/>
   <div class="content-layer">
-    <div class="exec-item ex1">${get("q17", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex2">${get("q18", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex3">${get("q19", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex4">${get("q20", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex5">${get("q21", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex6">${get("q22", data)?.mentor_note || ""}</div>
-    <div class="exec-item ex7">${get("q23", data)?.mentor_note || ""}</div>
+    <div class="exec-item ex1"><b>Step 1:</b> ${customSteps[0]}</div>
+    <div class="exec-item ex2"><b>Step 2:</b> ${customSteps[1]}</div>
+    <div class="exec-item ex3"><b>Step 3:</b> ${customSteps[2]}</div>
+    <div class="exec-item ex4"><b>Step 4:</b> ${customSteps[3]}</div>
+    <div class="exec-item ex5"><b>Step 5:</b> ${customSteps[4]}</div>
+    <div class="exec-item ex6"><b>Step 6:</b> ${customSteps[5]}</div>
+    <div class="exec-item ex7"><b>Step 7:</b> ${customSteps[6]}</div>
   </div>
 </div>
+
+
 
 ${images.physics ? `
 <div class="page">
@@ -350,11 +378,15 @@ ${attemptType === "2028" ? `
 </div>
 ` : ""}
 
+<!-- PAGE 11: CONCLUSION (Updated to use Q18 Verdict) -->
 <div class="page">
   <img src="${images.p11}" class="bg-img" onerror="this.style.display='none'"/>
   <div class="content-layer">
     <div class="dynamic-text p11-conc">
-      ${get("q17", data)?.mentor_note || "Focus on your barriers and execute the plan consistently."}
+      <span style="font-size: 22px; font-weight: 900; color: #a40000;">
+        ${get("q18", data)?.one_line || "Final Verdict"}
+      </span><br><br>
+      ${get("q18", data)?.mentor_note || "Focus on your barriers and execute the plan consistently."}
     </div>
   </div>
 </div>
