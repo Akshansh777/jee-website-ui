@@ -32,4 +32,8 @@ app.post("/send-dynamic-report", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+// Google Cloud Run requires listening on process.env.PORT and binding to "0.0.0.0"
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
