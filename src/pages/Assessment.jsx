@@ -636,7 +636,7 @@ export default function StudentSwotForm() {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/send-dynamic-report", {
+      const response = await fetch("https://backend-final-510329279046.asia-south1.run.app", {
 // ...
         method: "POST",
         headers: { "Content-Type": "application/json" },
